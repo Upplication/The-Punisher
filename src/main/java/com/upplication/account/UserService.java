@@ -4,6 +4,7 @@ import java.util.Collections;
 
 import javax.annotation.PostConstruct;
 
+import com.upplication.thepunisher.PunishmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.*;
@@ -15,8 +16,8 @@ public class UserService implements UserDetailsService {
 	
 	@Autowired
 	private AccountRepository accountRepository;
-	
-	@PostConstruct	
+
+	@PostConstruct
 	protected void initialize() {
 		accountRepository.save(new Account("user", "demo", "ROLE_USER"));
 		accountRepository.save(new Account("admin", "admin", "ROLE_ADMIN"));
