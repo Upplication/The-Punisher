@@ -14,7 +14,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {JpaTestConfig.class, PunishmentRepository.class})
+@ContextConfiguration(classes = {PunishTestConfig.class, PunishmentRepository.class})
 public class PunishmentRepositoryIT {
 
     @Autowired
