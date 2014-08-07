@@ -91,10 +91,7 @@ public class PunishmentRepository {
     @Transactional
     public boolean remove(int id) {
         try {
-            Punishment punishment = (Punishment)entityManager.createQuery("SELECT p FROM Punishment p WHERE p.id = :id")
-                    .setParameter("id", id)
-                    .getSingleResult();
-
+            Punishment punishment = entityManager.find(Punishment.class, id);
             entityManager.remove(punishment);
 
             return true;
