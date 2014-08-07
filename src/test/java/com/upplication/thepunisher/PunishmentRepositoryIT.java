@@ -15,7 +15,7 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {JpaTestConfig.class, PunishmentRepository.class})
+@ContextConfiguration(classes = {PunishTestConfig.class, PunishmentRepository.class})
 public class PunishmentRepositoryIT {
 
     @Autowired
@@ -58,8 +58,24 @@ public class PunishmentRepositoryIT {
 
         assertNotNull(punishmentBD);
         assertEquals(punishmentBD.getId(), punishment.getId());
-        assertEquals(punishmentBD.getTitle(), punishment.getTitle());
-        assertEquals(punishmentBD.getDescription(), punishment.getDescription());
+        assertEquals(punishmentBD.getTitle(), title);
+        assertEquals(punishmentBD.getDescription(), description);
+    }
+
+    @Test
+    public void create_another_punishment_then_persist_in_bd(){
+
+        final String title = "another title";
+        final String description = "description";
+
+        Punishment punishment = punishmentRepository.create(title, description);
+
+        Punishment punishmentBD = entityManager.find(Punishment.class, punishment.getId());
+
+        assertNotNull(punishmentBD);
+        assertEquals(punishmentBD.getId(), punishment.getId());
+        assertEquals(punishmentBD.getTitle(), title);
+        assertEquals(punishmentBD.getDescription(), description);
     }
 
     @Test
