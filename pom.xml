@@ -18,6 +18,7 @@
         <ch.qos.logback-version>1.0.13</ch.qos.logback-version>
         <org.thymeleaf-version>2.1.2.RELEASE</org.thymeleaf-version>
         <org.thymeleaf.extras.springsecurity3-version>2.1.1.RELEASE</org.thymeleaf.extras.springsecurity3-version>
+        <jackson.databind-version>2.4.0</jackson.databind-version>
     </properties>
     <repositories>
         <repository>
@@ -187,6 +188,11 @@
             <scope>provided</scope>
         </dependency>
         <!-- JSON -->
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-core-asl</artifactId>
+            <version>1.9.9</version>
+        </dependency>
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-mapper-asl</artifactId>
