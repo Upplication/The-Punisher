@@ -327,6 +327,11 @@
                         <groupId>org.jacoco</groupId>
                         <artifactId>jacoco-maven-plugin</artifactId>
                         <version>0.6.4.201312101107</version>
+                        <configuration>
+                           <includes>
+                                    <include>**/com/upplication/thepunisher/**</include>
+                           </includes>
+                        </configuration>
                         <executions>
                             <execution>
                                 <id>prepare-agent</id>
