@@ -23,7 +23,7 @@ import java.util.Properties;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(basePackageClasses = com.upplication.thepunisher.Application.class)
-public class PunishTestConfig extends WebMvcConfigurationSupport implements TransactionManagementConfigurer, DataSourceConfig {
+public class PunishJpaTestConfig implements TransactionManagementConfigurer, DataSourceConfig {
 
     @Value("${dataSource.driverClassName}")
     private String driver;

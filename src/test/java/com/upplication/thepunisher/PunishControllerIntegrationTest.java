@@ -1,6 +1,7 @@
 package com.upplication.thepunisher;
 
-import com.upplication.config.PunishTestConfig;
+import com.upplication.config.PunishJpaTestConfig;
+import com.upplication.config.PunishWebTestConfig;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,7 +27,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
-@ContextConfiguration(classes = {PunishTestConfig.class,
+@ContextConfiguration(classes = {PunishJpaTestConfig.class, PunishWebTestConfig.class,
         PunishmentRepository.class, PunishmentController.class,
         PunishmentForm.class})
 public class PunishControllerIntegrationTest {
