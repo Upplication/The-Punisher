@@ -328,9 +328,15 @@
                         <artifactId>jacoco-maven-plugin</artifactId>
                         <version>0.6.4.201312101107</version>
                         <configuration>
-                           <includes>
-                                    <include>**/com/upplication/thepunisher/**</include>
-                           </includes>
+                            <excludes>
+                                <exclude>**/com/upplication/account/**</exclude>
+                                <exclude>**/com/upplication/config/**</exclude>
+                                <exclude>**/com/upplication/support/**</exclude>
+                                <exclude>**/com/upplication/error/**</exclude>
+                                <exclude>**/com/upplication/signup/**</exclude>
+                                <exclude>**/com/upplication/home/**</exclude>
+                                <exclude>**/com/upplication/signin/**</exclude>
+                            </excludes>
                         </configuration>
                         <executions>
                             <execution>
