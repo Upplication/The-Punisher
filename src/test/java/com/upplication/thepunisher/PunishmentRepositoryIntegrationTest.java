@@ -15,7 +15,7 @@ import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {PunishTestConfig.class, PunishmentRepository.class})
-public class PunishmentRepositoryIT {
+public class PunishmentRepositoryIntegrationTest {
 
     @Autowired
     private PunishmentRepository punishmentRepository;

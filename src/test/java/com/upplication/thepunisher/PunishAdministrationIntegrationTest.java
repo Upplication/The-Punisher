@@ -7,7 +7,7 @@ import org.junit.Test;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 
-public class PunishAdministrationIT  extends WebSecurityConfigurationAware {
+public class PunishAdministrationIntegrationTest extends WebSecurityConfigurationAware {
 
   /*
     @Test

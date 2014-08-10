@@ -344,7 +344,7 @@
                         <configuration>
                             <format>xml</format>
                             <maxmem>256m</maxmem>
-                            
+
                         </configuration>
                     </plugin>
                 </plugins>
