@@ -1,6 +1,7 @@
 package com.upplication.thepunisher;
 
-import com.upplication.config.*;
+import com.upplication.config.PunishJpaTestConfig;
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +10,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -24,6 +24,12 @@ public class PunishmentRepositoryIntegrationTest {
     @PersistenceContext
     private EntityManager entityManager;
 
+    @After
+    public void after() {
+        if (entityManager.getTransaction().isActive()) {
+            entityManager.getTransaction().rollback();
+        }
+    }
 
     @Test
     public void create_punishment_with_title_hello_and_description_bye_then_return_object_punishment_with_title_hello_and_description_bye() {
@@ -63,7 +69,7 @@ public class PunishmentRepositoryIntegrationTest {
     }
 
     @Test
-    public void create_another_punishment_then_persist_in_bd(){
+    public void create_another_punishment_then_persist_in_bd() {
 
         final String title = "another title";
         final String description = "description";
@@ -151,7 +157,7 @@ public class PunishmentRepositoryIntegrationTest {
     }
 
     @Test
-     public void i_can_not_add_a_punishment_with_a_title_longer_than_100_characters() {
+    public void i_can_not_add_a_punishment_with_a_title_longer_than_100_characters() {
         final StringBuilder title = new StringBuilder("");
         final String description = "hello";
 
