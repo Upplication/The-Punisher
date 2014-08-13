@@ -3,6 +3,7 @@ package com.upplication.thepunisher;
 import com.upplication.config.PunishJpaTestConfig;
 import com.upplication.config.PunishWebTestConfig;
 import com.upplication.thepunisher.requests.PunishmentRequest;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.inject.Inject;
+import java.io.IOException;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -51,25 +53,24 @@ public class PunishmentControllerIntegrationTest {
     @Test
     public void post_to_create_punishment_with_invalid_title_length_should_fail() throws Exception {
         mockMvc.perform(post("/punishment/create")
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("title", sampleString(101))
-                .param("description", "description"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(convertObjectToJsonBytes(createRequest(sampleString(101), "description"))))
                 .andExpect(status().is4xxClientError());
     }
 
     @Test
     public void post_to_create_punishment_with_invalid_description_length_should_fail() throws Exception {
         mockMvc.perform(post("/punishment/create")
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("title", "title")
-                .param("description", sampleString(101)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(convertObjectToJsonBytes(createRequest("title", sampleString(101)))))
                 .andExpect(status().is4xxClientError());
     }
 
     @Test
     public void post_to_create_punishment_with_valid_data_should_create_punishment() throws Exception {
         mockMvc.perform(post("/punishment/create")
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(convertObjectToJsonBytes(createRequest("title", "description"))))
                 .andExpect(status().is2xxSuccessful());
     }
 
@@ -80,6 +81,19 @@ public class PunishmentControllerIntegrationTest {
         }
 
         return s.toString();
+    }
+
+    private PunishmentRequest createRequest(String title, String description) {
+        PunishmentRequest r = new PunishmentRequest();
+        r.setTitle(title);
+        r.setDescription(description);
+
+        return r;
+    }
+
+    private byte[] convertObjectToJsonBytes(Object object) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.writeValueAsBytes(object);
     }
 
 }
