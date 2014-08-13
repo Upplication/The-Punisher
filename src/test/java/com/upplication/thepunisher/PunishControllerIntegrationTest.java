@@ -153,7 +153,7 @@ public class PunishControllerIntegrationTest {
     }
 
     @Test
-    public void get_create_punishment_then_return_form_with_title_and_description() throws Exception {
+    public void get_create_punishment_then_return_html_with_form_with_title_and_description() throws Exception {
 
         mockMvc.perform(get("/create-punishment"))
                 .andExpect(status().isOk())
