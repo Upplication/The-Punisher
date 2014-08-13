@@ -1,8 +1,14 @@
 package com.upplication.thepunisher;
 
 
-public class PunishmentForm {
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+
+public class PunishmentForm implements Serializable {
+
+    @NotNull
     private String title;
+    @NotNull
     private String description;
 
     public String getDescription() {
@@ -11,5 +17,13 @@ public class PunishmentForm {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 }

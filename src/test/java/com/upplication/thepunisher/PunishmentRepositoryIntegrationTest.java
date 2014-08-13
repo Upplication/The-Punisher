@@ -15,8 +15,8 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {PunishTestConfig.class, PunishmentRepository.class})
-public class PunishmentRepositoryIT {
+@ContextConfiguration(classes = {PunishJpaTestConfig.class, PunishmentRepository.class})
+public class PunishmentRepositoryIntegrationTest {
 
     @Autowired
     private PunishmentRepository punishmentRepository;
