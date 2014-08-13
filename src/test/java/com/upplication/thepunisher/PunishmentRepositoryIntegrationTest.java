@@ -7,6 +7,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -25,10 +26,9 @@ public class PunishmentRepositoryIntegrationTest {
     private EntityManager entityManager;
 
     @After
-    public void after() {
-        if (entityManager.getTransaction().isActive()) {
-            entityManager.getTransaction().rollback();
-        }
+    @Transactional
+    public void teardown() {
+        punishmentRepository.wipe();
     }
 
     @Test
@@ -40,6 +40,8 @@ public class PunishmentRepositoryIntegrationTest {
 
         assertEquals(title, punishment.getTitle());
         assertEquals(description, punishment.getDescription());
+
+        punishmentRepository.remove(punishment.getId());
     }
 
     @Test

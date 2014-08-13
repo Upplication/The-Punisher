@@ -76,14 +76,15 @@ public class PunishmentRepository {
         Punishment punishment = null;
 
         try {
-            punishment = (Punishment)entityManager.createQuery("SELECT p FROM Punishment p WHERE p.id = :id")
+            punishment = (Punishment) entityManager.createQuery("SELECT p FROM Punishment p WHERE p.id = :id")
                     .setParameter("id", id)
                     .getSingleResult();
             punishment.setTitle(title);
             punishment.setDescription(description);
 
             entityManager.merge(punishment);
-        } catch (NoResultException ignored) {}
+        } catch (NoResultException ignored) {
+        }
 
         return punishment;
     }
@@ -92,11 +93,20 @@ public class PunishmentRepository {
     public boolean remove(int id) {
         try {
             Punishment punishment = entityManager.find(Punishment.class, id);
-            entityManager.remove(punishment);
+            if (punishment != null) {
+                entityManager.remove(punishment);
+            } else {
+                return false;
+            }
 
             return true;
-        } catch (NoResultException e) {
+        } catch (Exception e) {
             return false;
         }
+    }
+
+    @Transactional
+    public void wipe() {
+        entityManager.createQuery("delete from Punishment").executeUpdate();
     }
 }
