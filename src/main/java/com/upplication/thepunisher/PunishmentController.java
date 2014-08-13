@@ -21,8 +21,8 @@ class PunishmentController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
-    public Success savePunishment(@Valid @RequestBody Punishment punishment) {
-        return new Success(true, punishment.getTitle(), punishment.getDescription());
+    public Success savePunishment(@Valid @RequestBody PunishmentForm form) {
+        return new Success(true, form.getTitle(), form.getDescription());
     }
 
 

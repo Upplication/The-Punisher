@@ -4,7 +4,6 @@ import com.upplication.config.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -13,11 +12,7 @@ import javax.persistence.PersistenceContext;
 
 import java.util.List;
 
-import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {PunishJpaTestConfig.class, PunishmentRepository.class})
@@ -82,21 +77,4 @@ public class PunishmentRepositoryIntegrationTest {
         assertEquals(punishmentBD.getTitle(), title);
         assertEquals(punishmentBD.getDescription(), description);
     }
-
-    @Test
-    public void add_new_punishment_with_title_and_description_and_get_the_next_id(){
-
-        final String title = "title2";
-        final String description = "description2";
-
-        Punishment punishment = punishmentRepository.create(title, description);
-
-        Punishment punishmentBD = entityManager.find(Punishment.class, punishment.getId());
-
-        assertNotNull(punishmentBD);
-        assertEquals(punishmentBD.getId(), punishment.getId());
-        assertEquals(punishmentBD.getTitle(), title);
-        assertEquals(punishmentBD.getDescription(), description);
-    }
-
 }

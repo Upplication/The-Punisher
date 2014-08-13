@@ -127,7 +127,6 @@ public class PunishControllerIntegrationTest {
                 .andExpect(jsonPath("$.title", is("pepe")));
     }
 
-
     // helpers
 
     private PunishmentForm createPunishmentData(String title, String description) {

@@ -15,6 +15,8 @@ public class Punishment {
     @Column
     private String description;
 
+
+
     public String getTitle() {
         return title;
     }
@@ -35,6 +37,7 @@ public class Punishment {
         return id;
     }
 
-    //No dejo la opcion de setear el ID. Es un autoincrement no manipulable
-    //public void setId(int id) { this.id = id; }
+    public void setId(int id) {
+        this.id = id;
+    }
 }
