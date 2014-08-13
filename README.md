@@ -2,8 +2,8 @@ The-Punisher
 ============
 [![Build Status](https://travis-ci.org/Upplication/The-Punisher.svg?branch=jarnaiz)](https://travis-ci.org/Upplication/The-Punisher) [![Coverage Status](https://coveralls.io/repos/Upplication/The-Punisher/badge.png?branch=jarnaiz)](https://coveralls.io/r/Upplication/The-Punisher?branch=jarnaiz)
 
-- [x] Como Administrador quiero añadir un castigo mediante un título y una descripción. [ ]
- - [x] Quiero crear un castigo con titulo hola y descripción adiós y que devuelva un objeto castigo con titulo hola y descripción adiós. [x]
+- [x] Como Administrador quiero añadir un castigo mediante un título y una descripción.
+ - [x] Quiero crear un castigo con titulo hola y descripción adiós y que devuelva un objeto castigo con titulo hola y descripción adiós.
  - [x] Quiero crear un castigo con titulo pepe y descripción mundo y que devuelva un objeto castigo con titulo pepe y descripción mundo.:
  - [x] Como Creador quiero ver una pantalla donde introducir el título y la descripción y un botón enviar para guardar el objeto
  - [x] Como Creador quiero que una vez añadido un titulo y una descripción se muestre un mensaje de todo ha ido bien.
