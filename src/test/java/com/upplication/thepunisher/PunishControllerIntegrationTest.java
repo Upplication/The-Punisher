@@ -127,30 +127,6 @@ public class PunishControllerIntegrationTest {
                 .andExpect(jsonPath("$.title", is("pepe")));
     }
 
-    @Test
-    public void post_to_save_punishment_return_id() throws Exception {
-        PunishmentForm form = createPunishmentData("pepe", "pepe");
-
-        mockMvc.perform(post("/save-punishment")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(convertObjectToJsonBytes(form)))
-                // assert
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", notNullValue()));
-    }
-
-    @Test
-    public void post_to_save_punishment_then_return_id() throws Exception {
-        PunishmentForm form = createPunishmentData("pepe", "pepe");
-
-        mockMvc.perform(post("/save-punishment")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(convertObjectToJsonBytes(form)))
-                // assert
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", notNullValue()));
-    }
-
     // helpers
 
     private PunishmentForm createPunishmentData(String title, String description) {

@@ -22,8 +22,7 @@ class PunishmentController {
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
     public Success savePunishment(@Valid @RequestBody PunishmentForm form) {
-        Punishment punishment = punishmentRepository.create(form.getTitle(), form.getDescription());
-        return new Success(true, punishment.getId(), form.getTitle(), form.getDescription());
+        return new Success(true, form.getTitle(), form.getDescription());
     }
 
 
@@ -31,15 +30,13 @@ class PunishmentController {
     public static class Success {
 
         private boolean success;
-        private int id;
         private String title;
         private String description;
 
-        public Success(boolean success, int id, String title, String descrption){
+        public Success(boolean success, String title, String descrption){
             this.success = success;
             this.title = title;
             this.description = descrption;
-            this.id = id;
         }
 
         public boolean isSuccess() {
@@ -52,10 +49,6 @@ class PunishmentController {
 
         public String getDescription() {
             return description;
-        }
-
-        public int getId() {
-            return id;
         }
     }
 
