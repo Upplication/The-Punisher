@@ -153,4 +153,26 @@ public class PunishmentRepositoryIT {
         assertEquals(punishmentBD,null);
     }
 
+    @Test
+    public void title_length_100_punishment(){
+
+        final String titleOnce = "12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890";
+        final String descriptionOnce = "I haven't title";
+
+        Punishment punishmentBD = punishmentRepository.create(titleOnce, descriptionOnce);
+
+        assertEquals(punishmentBD,null);
+    }
+
+    @Test
+    public void description_length_100_empty_punishment(){
+
+        final String titleOnce = "I haven't description";
+        final String descriptionOnce = "12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890";
+
+        Punishment punishmentBD = punishmentRepository.create(titleOnce, descriptionOnce);
+
+        assertEquals(punishmentBD,null);
+    }
+
 }

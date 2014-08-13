@@ -17,7 +17,7 @@ public class PunishmentRepository {
 
     @Transactional
     public Punishment create(String title, String description) {
-        if(!(title == "" || description == "" || title.equals("") || description.equals(""))){
+        if(!(title == "" || description == "" || title.equals("") || description.equals("") || title.length() >100  || description.length() > 100)){
             try{
                 entityManager.createQuery("SELECT p FROM Punishment p WHERE p.title = :title")
                         .setParameter("title", title)
