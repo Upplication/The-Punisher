@@ -11,6 +11,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.ContentResultMatchers;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.inject.Inject;
@@ -18,11 +19,11 @@ import javax.inject.Inject;
 import java.io.IOException;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.core.Is.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -149,6 +150,19 @@ public class PunishControllerIntegrationTest {
                 // assert
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", notNullValue()));
+    }
+
+    @Test
+    public void get_create_punishment_then_return_form_with_title_and_description() throws Exception {
+
+        mockMvc.perform(get("/create-punishment"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("<!DOCTYPE html>")))
+                .andExpect(content().string(containsString("<html>")))
+                .andExpect(content().string(containsString("<body>")))
+                .andExpect(content().string(containsString("hello")))
+                .andExpect(content().string(containsString("</body>")))
+                .andExpect(content().string(containsString("</html>")));
     }
 
     // helpers

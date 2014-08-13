@@ -27,6 +27,11 @@ class PunishmentController {
     }
 
 
+    @RequestMapping(value = "create-punishment")
+    public String savePunishment() {
+        return "thepunisher/create";
+    }
+
 
     public static class Success {
 
