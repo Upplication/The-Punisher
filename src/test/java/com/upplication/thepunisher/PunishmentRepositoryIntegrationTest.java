@@ -98,5 +98,21 @@ public class PunishmentRepositoryIntegrationTest {
         assertEquals(punishmentBD.getTitle(), title);
         assertEquals(punishmentBD.getDescription(), description);
     }
+    
+    @Test
+    public void add_new_punishment_with_title_and_description_and_get_the_next_id_second_version(){
+
+        final String title = "title2";
+        final String description = "description2";
+
+        Punishment punishment = punishmentRepository.create(title, description);
+
+        Punishment punishmentBD = entityManager.find(Punishment.class, punishment.getId());
+
+        assertNotNull(punishmentBD);
+        assertEquals(punishmentBD.getId(), punishment.getId());
+        assertEquals(punishmentBD.getTitle(), title);
+        assertEquals(punishmentBD.getDescription(), description);
+    }
 
 }
