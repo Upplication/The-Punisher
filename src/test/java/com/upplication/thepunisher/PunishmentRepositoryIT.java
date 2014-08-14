@@ -61,7 +61,7 @@ public class PunishmentRepositoryIT {
         assertEquals(punishmentBD.getTitle(), punishment.getTitle());
         assertEquals(punishmentBD.getDescription(), punishment.getDescription());
     }
-
+    /*
     @Test
     public void retrieve_list_of_punishments_ordered_by_title() {
         final String letters = "ABCDE";
@@ -223,5 +223,5 @@ public class PunishmentRepositoryIT {
 
         boolean removed = punishmentRepository.remove(punishment.getId());
         assertTrue(removed);
-    }
+    }*/
 }

@@ -64,7 +64,7 @@ public class PunishControllerIntegrationTest {
                 .content(""))
                 .andExpect(status().is4xxClientError());
     }
-
+    /*
     @Test
     public void post_to_save_punishment_with_json_empty_fields_then_return_status_bad_request() throws Exception {
         PunishmentForm form = createPunishmentData(null, null);
@@ -126,7 +126,7 @@ public class PunishControllerIntegrationTest {
                 .andExpect(jsonPath("$.description", is("pepe")))
                 .andExpect(jsonPath("$.title", is("pepe")));
     }
-
+    */
 
     // helpers
 

@@ -34,15 +34,10 @@ public class PunishmentRepository {
     }
 
     @Transactional
-    @SuppressWarnings("unchecked")
-    public List<Punishment> getAll() {
-        return (List<Punishment>) entityManager.createQuery("SELECT p FROM Punishment p ORDER BY p.title ASC").getResultList();
-    }
-
-    @Transactional
     public boolean exists(String title) {
+
         try {
-            entityManager.createQuery("SELECT p FROM Punishment p WHERE p.title = :title")
+            Punishment punishment = (Punishment)entityManager.createQuery("SELECT p FROM Punishment p WHERE p.title = :title")
                     .setParameter("title", title)
                     .getSingleResult();
 
@@ -51,6 +46,14 @@ public class PunishmentRepository {
             return false;
         }
     }
+
+    /*
+    @Transactional
+    @SuppressWarnings("unchecked")
+    public List<Punishment> getAll() {
+        return (List<Punishment>) entityManager.createQuery("SELECT p FROM Punishment p ORDER BY p.title ASC").getResultList();
+    }
+
 
     @Transactional
     public boolean exists(String title, int id) {
@@ -102,4 +105,5 @@ public class PunishmentRepository {
             return false;
         }
     }
+    */
 }
