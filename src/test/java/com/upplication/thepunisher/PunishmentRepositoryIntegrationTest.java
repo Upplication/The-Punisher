@@ -9,6 +9,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 
 import java.util.List;
@@ -84,7 +85,7 @@ public class PunishmentRepositoryIntegrationTest {
     }
 
     @Test
-    public void add_new_punishment_with_title_and_description_and_get_the_next_id(){
+    public void add_two_new_punishments_and_check_the_next_id_is_one_more(){
 
         final String title = "title1";
         final String description = "description1";
@@ -103,6 +104,84 @@ public class PunishmentRepositoryIntegrationTest {
         assertNotNull(punishmentBD);
         assertNotNull(punishmentBD2);
         assertEquals(punishmentBD.getId()+1, punishmentBD2.getId());
+    }
+
+
+    @Test
+    public void add_new_punishment_with_title_and_description_and_check_if_exists_title_on_db(){
+
+        final String title = "titleOnDB";
+        final String description = "descriptionOnDB";
+
+        Punishment punishment = punishmentRepository.create(title, description);
+
+        boolean testExists = punishmentRepository.existsTitle(title);
+
+        assertTrue(testExists);
+
+    }
+
+    @Test
+    public void add_new_punishment_with_title_and_description_and_check_if_exists_punishment_with_id_on_db(){
+
+        final String title = "titleOnDB2";
+        final String description = "descriptionOnDB2";
+
+        Punishment punishment = punishmentRepository.create(title, description);
+
+        boolean testExists = punishmentRepository.existsByID(punishment.getId());
+
+        assertTrue(testExists);
+
+    }
+
+    @Test
+    public void add_new_punishment_with_title_and_description_and_check_the_title_is_not_empty(){
+
+        final String title = "";
+        final String description = "descriptionOnDB2";
+
+        Punishment punishment = punishmentRepository.create(title, description);
+
+        assertNull(punishment);
+
+    }
+
+    @Test
+    public void add_new_punishment_with_title_and_description_and_check_the_description_is_less_than_100_characters(){
+
+        final String title = "";
+        //101 characters
+        final String description = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+
+        Punishment punishment = punishmentRepository.create(title, description);
+
+        assertNull(punishment);
+
+    }
+
+
+    @Test
+    public void add_new_punishment_with_title_and_description_and_show_a_list_with_the_new_punishment(){
+
+        final String title = "title3";
+        //101 characters
+        final String description = "description3";
+
+        Punishment punishment = punishmentRepository.create(title, description);
+
+        List<Punishment> punishmentList = punishmentRepository.list();
+
+        System.out.println(punishmentList.get(0).getTitle());
+        System.out.println(punishmentList.contains(punishment));
+
+        punishmentRepository.printList();
+
+        assertNotNull(punishmentList);
+        assertFalse(punishmentList.isEmpty());
+        assertEquals(punishment.getTitle(),punishmentList.get(0).getTitle());
+        //assertTrue(punishmentList.contains(punishment));
+
     }
 
 

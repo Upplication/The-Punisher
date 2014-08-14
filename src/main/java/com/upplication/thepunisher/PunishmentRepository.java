@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import java.util.Iterator;
 import java.util.List;
 
 @Repository
@@ -18,7 +19,7 @@ public class PunishmentRepository {
 
     @Transactional
     public Punishment create(String title, String description) {
-        if (title.equals("") || description.equals("") || exists(title)
+        if (title.equals("") || description.equals("") || existsTitle(title)
                 || title.length() > 100 || description.length() > 100) {
             return null;
         }
@@ -34,7 +35,7 @@ public class PunishmentRepository {
     }
 
     @Transactional
-    public boolean exists(String title) {
+    public boolean existsTitle(String title) {
 
         try {
             Punishment punishment = (Punishment)entityManager.createQuery("SELECT p FROM Punishment p WHERE p.title = :title")
@@ -45,6 +46,53 @@ public class PunishmentRepository {
         } catch (NoResultException e) {
             return false;
         }
+    }
+
+    @Transactional
+    public boolean existsByID(int id) {
+
+        try {
+            Punishment punishment = (Punishment)entityManager.createQuery("SELECT p FROM Punishment p WHERE p.id = :id")
+                    .setParameter("id", id)
+                    .getSingleResult();
+
+            return true;
+        } catch (NoResultException e) {
+            return false;
+        }
+    }
+
+    @Transactional
+    public List<Punishment> list() {
+
+            List<Punishment> list = (List<Punishment>)entityManager.createQuery("SELECT p FROM Punishment p")
+                    .getResultList();
+
+            return list;
+    }
+
+    @Transactional
+    public void printList() {
+
+        List<Punishment> list = (List<Punishment>)entityManager.createQuery("SELECT p FROM Punishment p")
+                .getResultList();
+
+        System.out.println(" ----------  PUNISHMENTS --------------- ");
+        /*Iterator itr = list.iterator();
+        while(itr.hasNext()) {
+            Object element = itr.next();
+
+            String title = element.getT
+
+            System.out.print(element. + " ");
+        }*/
+        for (Punishment element : list) {
+            System.out.println("ID: "+element.getId());
+            System.out.println("Title: "+element.getTitle());
+            System.out.println("Descripcion: "+element.getDescription());
+        }
+
+
     }
 
     /*
