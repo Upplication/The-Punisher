@@ -18,7 +18,8 @@ RULES:
  - [x] Como Creador quiero que una vez añadido un titulo y una descripción se muestre un mensaje de todo ha ido bien.
  - [x] Como Creador quiero persistir en una BD el castigo con titulo, descripción y un id único.
  - [x] Como Creador quiero guardar el castigo con titulo jamón y el sistema me devuelve el castigo con titulo jamón y un id único
- - [ ] Como Creador quiero ver una pantalla donde introducir el título y la descripción y un botón enviar para guardar el objeto
+ - [X] Como Administrador quiero que el titulo no supere los 100 caracteres ni sea vacio, y muestre un mensaje informativo
+ - [X] Como Administrador quiero que la descripcion no supere los 100 caracteres ni sea vacio, y muestre un mensaje informativo
  - [ ] Como Administrador quiero ver un listado de castigos con título y descripción
 - [ ] Como Administrador quiero ver un listado de castigos con título y descripción ordenados por orden alfabético del título.
  - [ ] Como Creador entro en la pantalla de administración de castigos y visualizo los castigos guardados anteriormente.
