@@ -7,6 +7,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Arrays;
+import java.util.List;
 
 @Controller
 class PunishmentController {
@@ -30,6 +32,13 @@ class PunishmentController {
     @RequestMapping(value = "create-punishment")
     public String savePunishment() {
         return "thepunisher/create";
+    }
+
+
+    @RequestMapping(value = "list-punishment")
+    @ResponseBody
+    public List<Punishment> listPunishment() {
+        return punishmentRepository.list();
     }
 
 

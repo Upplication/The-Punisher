@@ -1,14 +1,19 @@
 package com.upplication.thepunisher;
 
 import com.upplication.config.*;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -22,6 +27,12 @@ public class PunishmentRepositoryIntegrationTest {
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    @Before
+    public void setup(){
+        // TODO: how to set transactional this method only and do: entityManager.createQuery("delete from Punishment").executeUpdate();
+        punishmentRepository.deleteAll();
+    }
 
 
     @Test
@@ -79,4 +90,65 @@ public class PunishmentRepositoryIntegrationTest {
         assertEquals(punishmentBD.getTitle(), title);
         assertEquals(punishmentBD.getDescription(), description);
     }
+
+    // list
+
+    @Test
+    public void list_persisted_elements(){
+
+        Punishment punishment = punishmentRepository.create("title", "description");
+
+        List<Punishment> persisted = punishmentRepository.list();
+
+        assertNotNull(persisted);
+        assertEquals(1, persisted.size());
+        Punishment punishmentList = persisted.get(0);
+        assertEquals(punishment.getId(), punishmentList.getId());
+        assertEquals(punishment.getTitle(), punishmentList.getTitle());
+        assertEquals(punishment.getDescription(), punishmentList.getDescription());
+    }
+
+    @Test
+    public void list_another_persisted_elements(){
+
+        Punishment punishment = punishmentRepository.create("another title", "description");
+
+        List<Punishment> persisted = punishmentRepository.list();
+
+        assertNotNull(persisted);
+        assertEquals(1, persisted.size());
+        Punishment punishmentList = persisted.get(0);
+        assertEquals(punishment.getId(), punishmentList.getId());
+        assertEquals(punishment.getTitle(), punishmentList.getTitle());
+        assertEquals(punishment.getDescription(), punishmentList.getDescription());
+    }
+
+    @Test
+    public void list_persisted_elements_return_ordered_alphabetical_by_title(){
+
+        Punishment punishment1 = punishmentRepository.create("another title", "description");
+        Punishment punishment2 = punishmentRepository.create("title", "description");
+
+        List<Punishment> persisted = punishmentRepository.list();
+
+        assertNotNull(persisted);
+        assertEquals(2, persisted.size());
+        assertEquals(punishment1.getId(), persisted.get(0).getId());
+        assertEquals(punishment2.getId(), persisted.get(1).getId());
+    }
+
+    @Test
+    public void another_list_persisted_elements_return_ordered_alphabetical_by_title(){
+
+        Punishment punishment1 = punishmentRepository.create("zzzz", "description");
+        Punishment punishment2 = punishmentRepository.create("aaaa", "description");
+
+        List<Punishment> persisted = punishmentRepository.list();
+
+        assertNotNull(persisted);
+        assertEquals(2, persisted.size());
+        assertEquals(punishment2.getId(), persisted.get(0).getId());
+        assertEquals(punishment1.getId(), persisted.get(1).getId());
+    }
+
 }

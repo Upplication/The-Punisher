@@ -7,6 +7,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.times;
@@ -51,6 +54,39 @@ public class PunishControllerTest {
 
         verify(punishmentRepository, times(1)).create(eq(data.getTitle()), eq(data.getDescription()));
         assertEquals(id, success.getId());
+    }
+
+    // list punishment
+
+    @Test
+    public void list_punishment_then_return_list_punishment_with_title_and_description() {
+        Punishment punishment = new Punishment();
+        punishment.setId(1);
+        punishment.setDescription("my first punishment");
+        punishment.setTitle("hello");
+        when(punishmentRepository.list()).thenReturn(Arrays.asList(punishment));
+
+        List<Punishment> list = controller.listPunishment();
+
+        assertEquals(1, list.size());
+        Punishment punishmentList = list.get(0);
+        assertEquals(1, punishmentList.getId());
+        assertEquals("hello", punishmentList.getTitle());
+        assertEquals("my first punishment", punishmentList.getDescription());
+    }
+
+    @Test
+    public void list_punishment_then_return_list_punishment_persisted() {
+        Punishment punishment = new Punishment();
+        punishment.setId(1);
+        punishment.setDescription("description");
+        punishment.setTitle("title");
+        when(punishmentRepository.list()).thenReturn(Arrays.asList(punishment));
+
+        List<Punishment> list = controller.listPunishment();
+
+        assertEquals(1, list.size());
+        assertEquals(punishment, list.get(0));
     }
 
     //

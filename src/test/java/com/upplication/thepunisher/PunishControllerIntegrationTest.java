@@ -3,9 +3,11 @@ package com.upplication.thepunisher;
 import com.upplication.config.PunishJpaTestConfig;
 import com.upplication.config.PunishWebTestConfig;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -20,6 +22,7 @@ import java.io.IOException;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -37,9 +40,13 @@ public class PunishControllerIntegrationTest {
     protected WebApplicationContext wac;
     protected MockMvc mockMvc;
 
+    @Autowired PunishmentRepository punishmentRepository;
+
     @Before
     public void before() {
         this.mockMvc = webAppContextSetup(this.wac).build();
+        // TODO: how to set transactional this method only and do: entityManager.createQuery("delete from Punishment").executeUpdate();
+        punishmentRepository.deleteAll();
     }
 
     @Test
@@ -152,17 +159,102 @@ public class PunishControllerIntegrationTest {
                 .andExpect(jsonPath("$.id", notNullValue()));
     }
 
+    // TODO: separate test and slim the configuration (mock backend)
+
     @Test
-    public void get_create_punishment_then_return_html_with_form_with_title_and_description() throws Exception {
+    public void get_create_punishment_then_return_html_with_form() throws Exception {
 
         mockMvc.perform(get("/create-punishment"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("<!DOCTYPE html>")))
                 .andExpect(content().string(containsString("<html>")))
                 .andExpect(content().string(containsString("<body>")))
-                .andExpect(content().string(containsString("hello")))
                 .andExpect(content().string(containsString("</body>")))
                 .andExpect(content().string(containsString("</html>")));
+    }
+
+    @Test
+    public void get_create_punishment_then_return_html_with_input_title() throws Exception {
+
+        mockMvc.perform(get("/create-punishment"))
+                .andExpect(status().isOk())
+                .andExpect(xpath("//input[@name=\"title\" and @type=\"text\"]").exists());
+    }
+
+    @Test
+    public void get_create_punishment_then_return_html_with_input_description() throws Exception {
+
+        mockMvc.perform(get("/create-punishment"))
+                .andExpect(status().isOk())
+                .andExpect(xpath("//input[@name=\"description\" and @type=\"text\"]").exists());
+    }
+
+    @Test
+    public void get_create_punishment_then_return_html_with_submit_form() throws Exception {
+
+        mockMvc.perform(get("/create-punishment"))
+                .andExpect(status().isOk())
+                .andExpect(xpath("//form/input[@type=\"submit\"]").exists());
+    }
+
+    @Test
+    public void get_create_punishment_then_return_html_with_form_contains_input_title_and_description_and_submit() throws Exception {
+
+        mockMvc.perform(get("/create-punishment"))
+                .andExpect(status().isOk())
+                .andExpect(xpath("//form[@action=\"save-punishment\"]").exists())
+                .andExpect(xpath("//form/input[@type=\"submit\"]").exists())
+                .andExpect(xpath("//form/input[@name=\"description\"]").exists())
+                .andExpect(xpath("//form/input[@name=\"title\"]").exists());
+    }
+
+    // list punishment
+
+    @Test
+    public void get_list_punishment_only_accept_json_then_return_status_ok() throws Exception {
+
+        mockMvc.perform(post("/list-punishment")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void get_list_punishment_only_accept_json_then_return_list_punishment() throws Exception {
+
+        punishmentRepository.create("pepe", "pepe");
+
+        mockMvc.perform(post("/list-punishment")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].id", notNullValue()))
+                .andExpect(jsonPath("$[0].description", is("pepe")))
+                .andExpect(jsonPath("$[0].title", is("pepe")));
+    }
+
+    @Test
+    public void get_another_list_punishment_only_accept_json_then_return_list_punishment() throws Exception {
+
+        punishmentRepository.create("uea title", "pepe");
+        punishmentRepository.create("another title", "pepe");
+
+        mockMvc.perform(post("/list-punishment")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].id", notNullValue()))
+                .andExpect(jsonPath("$[0].description", is("pepe")))
+                .andExpect(jsonPath("$[0].title", is("another title")))
+                .andExpect(jsonPath("$[1].id", notNullValue()))
+                .andExpect(jsonPath("$[1].description", is("pepe")))
+                .andExpect(jsonPath("$[1].title", is("uea title")));
+    }
+
+    @Test
+    public void get_create_punishment_return_the_previous_created_punishment_by_ajax() throws Exception {
+        mockMvc.perform(get("/create-punishment"))
+                .andExpect(status().isOk())
+                .andExpect(xpath("//div[@id=\"list-punishments\"]").exists());
     }
 
     // helpers
