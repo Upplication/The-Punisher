@@ -153,11 +153,11 @@ public class PunishmentControllerIntegrationTest {
     }
 
     @Test
-    public void get_to_get_all_punishments_should_retrieve_all_punishments() throws Exception {
+    public void get_to_get_all_punishments_should_retrieve_all_punishments_ordered_by_title() throws Exception {
         punishmentRepository.wipe();
 
         for (int i = 0; i < 5; i++) {
-            createPunishment("title " + i);
+            createPunishment(Character.toString((char)(69 - i)));
         }
 
         String result = mockMvc.perform(get("/punishment/list")
@@ -173,7 +173,7 @@ public class PunishmentControllerIntegrationTest {
                     .getJSONObject(i);
 
             assertNotNull(punishment);
-            assertEquals("title " + i, punishment.getString("title"));
+            assertEquals(Character.toString((char)(65 + i)), punishment.getString("title"));
         }
     }
 
