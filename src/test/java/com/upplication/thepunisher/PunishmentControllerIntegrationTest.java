@@ -16,15 +16,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.io.IOException;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
+
+import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
@@ -32,9 +31,6 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
         PunishmentRepository.class, PunishmentController.class,
         PunishmentRequest.class})
 public class PunishmentControllerIntegrationTest {
-
-    @PersistenceContext
-    private EntityManager entityManager;
 
     @Inject
     protected WebApplicationContext wac;
@@ -125,6 +121,31 @@ public class PunishmentControllerIntegrationTest {
                 .andExpect(status().is2xxSuccessful());
     }
 
+    @Test
+    public void delete_to_remove_punishment_should_only_accept_delete() throws Exception {
+        Punishment p = createPunishment("title5");
+        mockMvc.perform(get("/punishment/" + p.getId()))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void delete_to_remove_punishment_with_invalid_id_should_fail() throws Exception {
+        mockMvc.perform(delete("/punishment/" + 900)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void delete_to_remove_punishment_with_valid_id_should_remove_punishment() throws Exception {
+        Punishment p = createPunishment("title7");
+        mockMvc.perform(delete("/punishment/" + p.getId())
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful());
+
+        Punishment punishment = getPunishment(p.getId());
+        assertNull(punishment);
+    }
+
     private String sampleString(int n) {
         StringBuilder s = new StringBuilder("");
         for (int i = 0; i < n; i++) {
@@ -145,6 +166,11 @@ public class PunishmentControllerIntegrationTest {
     @Transactional
     private Punishment createPunishment(String title) {
         return punishmentRepository.create(title, "description");
+    }
+
+    @Transactional
+    private Punishment getPunishment(int id) {
+        return punishmentRepository.get(id);
     }
 
     private byte[] convertObjectToJsonBytes(Object object) throws IOException {

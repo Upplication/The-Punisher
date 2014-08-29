@@ -102,4 +102,15 @@ public class PunishmentRepository {
     public void wipe() {
         entityManager.createQuery("delete from Punishment").executeUpdate();
     }
+
+    @Transactional
+    public Punishment get(int id) {
+        try {
+            return (Punishment) entityManager.createQuery("SELECT p FROM Punishment p WHERE p.id = :id")
+                    .setParameter("id", id)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
 }
