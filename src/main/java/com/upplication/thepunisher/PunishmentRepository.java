@@ -35,15 +35,11 @@ public class PunishmentRepository {
 
     @Transactional
     public boolean remove(int id) {
-        try {
             Punishment punishment = (Punishment)entityManager.createQuery("SELECT p FROM Punishment p WHERE p.id = :id")
                     .setParameter("id", id)
                     .getSingleResult();
             entityManager.remove(punishment);
             return true;
-        } catch (NoResultException e) {
-            return false;
-        }
     }
 
     @Transactional
