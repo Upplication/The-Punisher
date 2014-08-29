@@ -18,7 +18,7 @@
             {
                // not works var postData = $(this).serialize();
                 var formData = {
-                    'name' 				: $('input[name=title]').val(),
+                    'title' 			: $('input[name=title]').val(),
                     'description' 		: $('input[name=description]').val()
                 };
                 var formURL = $(this).attr("action");
@@ -26,7 +26,7 @@
                         {
                             url : formURL,
                             type: "POST",
-                            data : formData,
+                            data : JSON.stringify(formData),
                             //processData : false,
                             dataType: "json",
                             contentType: 'application/json;charset=utf-8',
