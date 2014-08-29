@@ -25,4 +25,15 @@ public class PunishmentController {
         return punishmentRepository.create(req.getTitle(), req.getDescription());
     }
 
+    @RequestMapping(
+            value = "/punishment/{id}",
+            method = RequestMethod.PUT,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @ResponseBody
+    public Punishment editPunishment(@Valid @RequestBody PunishmentRequest req, @PathVariable int id) {
+        return punishmentRepository.edit(id, req.getTitle(), req.getDescription());
+    }
+
 }

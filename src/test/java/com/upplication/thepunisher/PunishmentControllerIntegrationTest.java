@@ -12,13 +12,17 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.io.IOException;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
@@ -29,9 +33,15 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
         PunishmentRequest.class})
 public class PunishmentControllerIntegrationTest {
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     @Inject
     protected WebApplicationContext wac;
     protected MockMvc mockMvc;
+
+    @Inject
+    protected PunishmentRepository punishmentRepository;
 
     @Before
     public void before() {
@@ -74,6 +84,47 @@ public class PunishmentControllerIntegrationTest {
                 .andExpect(status().is2xxSuccessful());
     }
 
+    @Test
+    public void put_to_edit_punishment_should_throw_error_if_no_data_sent() throws Exception {
+        Punishment p = createPunishment("title");
+        mockMvc.perform(put("/punishment/" + p.getId()))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void put_to_edit_punishment_should_only_accept_put() throws Exception {
+        Punishment p = createPunishment("title1");
+        mockMvc.perform(get("/punishment/" + p.getId()))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void put_to_edit_punishment_with_invalid_title_length_should_fail() throws Exception {
+        Punishment p = createPunishment("title2");
+        mockMvc.perform(put("/punishment/" + p.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(convertObjectToJsonBytes(createRequest(sampleString(101), "description"))))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void put_to_edit_punishment_with_invalid_description_length_should_fail() throws Exception {
+        Punishment p = createPunishment("title3");
+        mockMvc.perform(put("/punishment/" + p.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(convertObjectToJsonBytes(createRequest("title", sampleString(101)))))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void put_to_edit_punishment_with_valid_data_should_edit_punishment() throws Exception {
+        Punishment p = createPunishment("title4");
+        mockMvc.perform(put("/punishment/" + p.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(convertObjectToJsonBytes(createRequest("edited", "edited"))))
+                .andExpect(status().is2xxSuccessful());
+    }
+
     private String sampleString(int n) {
         StringBuilder s = new StringBuilder("");
         for (int i = 0; i < n; i++) {
@@ -89,6 +140,11 @@ public class PunishmentControllerIntegrationTest {
         r.setDescription(description);
 
         return r;
+    }
+
+    @Transactional
+    private Punishment createPunishment(String title) {
+        return punishmentRepository.create(title, "description");
     }
 
     private byte[] convertObjectToJsonBytes(Object object) throws IOException {
