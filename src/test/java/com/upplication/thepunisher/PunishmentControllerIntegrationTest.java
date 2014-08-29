@@ -4,6 +4,7 @@ import com.upplication.config.PunishJpaTestConfig;
 import com.upplication.config.PunishWebTestConfig;
 import com.upplication.thepunisher.requests.PunishmentRequest;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,18 +13,19 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.inject.Inject;
 import java.io.IOException;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
-
-import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
@@ -144,6 +146,31 @@ public class PunishmentControllerIntegrationTest {
 
         Punishment punishment = getPunishment(p.getId());
         assertNull(punishment);
+    }
+
+    @Test
+    public void get_to_get_all_punishments_should_retrieve_all_punishments() throws Exception {
+        punishmentRepository.wipe();
+
+        for (int i = 0; i < 5; i++) {
+            createPunishment("title " + i);
+        }
+
+        String result = mockMvc.perform(get("/punishment/list")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andReturn().getResponse().getContentAsString();
+
+        JSONObject response = new JSONObject(result);
+        assertNotNull(response.getJSONArray("punishments"));
+
+        for (int i = 0; i < 5; i++) {
+            JSONObject punishment = response.getJSONArray("punishments")
+                    .getJSONObject(i);
+
+            assertNotNull(punishment);
+            assertEquals("title " + i, punishment.getString("title"));
+        }
     }
 
     private String sampleString(int n) {

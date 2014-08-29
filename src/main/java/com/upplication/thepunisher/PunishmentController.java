@@ -9,6 +9,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 public class PunishmentController {
@@ -52,6 +55,19 @@ public class PunishmentController {
         } else {
             response = new ResponseEntity(HttpStatus.NOT_FOUND);
         }
+
+        return response;
+    }
+
+    @RequestMapping(
+            value = "/punishment/list",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @ResponseBody
+    public Map<String, List<Punishment>> listPunishments() {
+        Map<String, List<Punishment>> response = new HashMap<>();
+        response.put("punishments", punishmentRepository.getAll());
 
         return response;
     }
