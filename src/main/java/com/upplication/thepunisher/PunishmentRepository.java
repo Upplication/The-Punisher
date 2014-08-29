@@ -75,17 +75,13 @@ public class PunishmentRepository {
 
         Punishment punishment;
 
-        try {
-            punishment = (Punishment) entityManager.createQuery("SELECT p FROM Punishment p WHERE p.id = :id")
-                    .setParameter("id", id)
-                    .getSingleResult();
-            punishment.setTitle(title);
-            punishment.setDescription(description);
+        punishment = (Punishment) entityManager.createQuery("SELECT p FROM Punishment p WHERE p.id = :id")
+                .setParameter("id", id)
+                .getSingleResult();
+        punishment.setTitle(title);
+        punishment.setDescription(description);
 
-            entityManager.merge(punishment);
-        } catch (NoResultException ignored) {
-            return null;
-        }
+        entityManager.merge(punishment);
 
         return punishment;
     }
