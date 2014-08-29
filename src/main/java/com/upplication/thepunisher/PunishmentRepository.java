@@ -73,7 +73,7 @@ public class PunishmentRepository {
             return null;
         }
 
-        Punishment punishment = null;
+        Punishment punishment;
 
         try {
             punishment = (Punishment) entityManager.createQuery("SELECT p FROM Punishment p WHERE p.id = :id")
@@ -84,6 +84,7 @@ public class PunishmentRepository {
 
             entityManager.merge(punishment);
         } catch (NoResultException ignored) {
+            return null;
         }
 
         return punishment;
@@ -91,18 +92,14 @@ public class PunishmentRepository {
 
     @Transactional
     public boolean remove(int id) {
-        try {
-            Punishment punishment = entityManager.find(Punishment.class, id);
-            if (punishment != null) {
-                entityManager.remove(punishment);
-            } else {
-                return false;
-            }
-
-            return true;
-        } catch (Exception e) {
+        Punishment punishment = entityManager.find(Punishment.class, id);
+        if (punishment != null) {
+            entityManager.remove(punishment);
+        } else {
             return false;
         }
+
+        return true;
     }
 
     @Transactional
