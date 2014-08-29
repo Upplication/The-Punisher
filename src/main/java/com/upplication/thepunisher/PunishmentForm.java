@@ -1,14 +1,21 @@
 package com.upplication.thepunisher;
 
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 public class PunishmentForm implements Serializable {
 
     @NotNull
+    @NotEmpty
+    @Size(max = 100)
     private String title;
     @NotNull
+    @NotEmpty
+    @Size(max = 100)
     private String description;
 
     public String getDescription() {

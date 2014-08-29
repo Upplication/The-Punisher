@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 
@@ -35,5 +36,16 @@ public class PunishmentRepository {
     @Transactional
     public void deleteAll() {
         entityManager.createQuery("delete from Punishment").executeUpdate();
+    }
+
+    public Punishment getByTitle(String title) {
+        try {
+            return (Punishment) entityManager.createQuery("FROM Punishment WHERE title = :title")
+                .setParameter("title", title)
+                .getSingleResult();
+        }
+        catch (NoResultException e) {
+            return null;
+        }
     }
 }

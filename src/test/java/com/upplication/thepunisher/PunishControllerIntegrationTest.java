@@ -24,6 +24,7 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertFalse;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -136,18 +137,6 @@ public class PunishControllerIntegrationTest {
     }
 
     @Test
-    public void post_to_save_punishment_return_id() throws Exception {
-        PunishmentForm form = createPunishmentData("pepe", "pepe");
-
-        mockMvc.perform(post("/save-punishment")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(convertObjectToJsonBytes(form)))
-                // assert
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", notNullValue()));
-    }
-
-    @Test
     public void post_to_save_punishment_then_return_id() throws Exception {
         PunishmentForm form = createPunishmentData("pepe", "pepe");
 
@@ -158,6 +147,102 @@ public class PunishControllerIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", notNullValue()));
     }
+    @Test
+    public void punishment_with_empty_title_then_return_bad_request() throws Exception {
+        PunishmentForm form = createPunishmentData("", "pepe");
+
+        mockMvc.perform(post("/save-punishment")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(convertObjectToJsonBytes(form)))
+                // assert
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void punishment_with_empty_description_then_return_bad_request() throws Exception {
+        PunishmentForm form = createPunishmentData("pepe", "");
+
+        mockMvc.perform(post("/save-punishment")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(convertObjectToJsonBytes(form)))
+                // assert
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void punishment_with_title_length_more_than_100_characters_then_return_bad_request() throws Exception {
+        PunishmentForm form = createPunishmentData("1234567890" +
+                "1234567890" + "1234567890" + "1234567890" +"1234567890" +
+                "1234567890" +"1234567890" + "1234567890" + "1234567890" +
+                "1234567890" + "1"
+                , "description");
+
+        mockMvc.perform(post("/save-punishment")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(convertObjectToJsonBytes(form)))
+                // assert
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void punishment_with_title_length_equal_than_100_characters_then_return_status_ok() throws Exception {
+        PunishmentForm form = createPunishmentData("1234567890" +
+                "1234567890" + "1234567890" + "1234567890" +"1234567890" +
+                "1234567890" +"1234567890" + "1234567890" + "1234567890" +
+                "1234567890"
+                , "description");
+
+        mockMvc.perform(post("/save-punishment")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(convertObjectToJsonBytes(form)))
+                // assert
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void punishment_with_description_length_more_than_100_characters_then_return_bad_request() throws Exception {
+        PunishmentForm form = createPunishmentData("title", "1234567890" +
+                "1234567890" + "1234567890" + "1234567890" +"1234567890" +
+                "1234567890" +"1234567890" + "1234567890" + "1234567890" +
+                "1234567890" + "1");
+
+        mockMvc.perform(post("/save-punishment")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(convertObjectToJsonBytes(form)))
+                // assert
+                .andExpect(status().isBadRequest());
+    }
+    @Test
+    public void punishment_with_description_equal_than_100_characters_then_return_status_ok() throws Exception {
+        PunishmentForm form = createPunishmentData("title", "1234567890" +
+                "1234567890" + "1234567890" + "1234567890" +"1234567890" +
+                "1234567890" +"1234567890" + "1234567890" + "1234567890" +
+                "1234567890");
+
+        mockMvc.perform(post("/save-punishment")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(convertObjectToJsonBytes(form)))
+                // assert
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void punishment_with_title_already_exists_then_return_bad_request() throws Exception {
+        PunishmentForm form = createPunishmentData("title", "description");
+        PunishmentForm form2 = createPunishmentData("title", "description");
+
+        mockMvc.perform(post("/save-punishment")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(convertObjectToJsonBytes(form)))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(post("/save-punishment")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(convertObjectToJsonBytes(form2)))
+                // assert
+                .andExpect(status().isBadRequest());
+    }
+
 
     // TODO: separate test and slim the configuration (mock backend)
 

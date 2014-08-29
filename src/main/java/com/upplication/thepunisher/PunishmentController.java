@@ -24,6 +24,9 @@ class PunishmentController {
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
     public Success savePunishment(@Valid @RequestBody PunishmentForm form) {
+        if (punishmentRepository.getByTitle(form.getTitle()) != null){
+            throw new IllegalArgumentException("title already exists: " + form.getTitle());
+        }
         Punishment punishment = punishmentRepository.create(form.getTitle(), form.getDescription());
         return new Success(true, punishment.getId(), form.getTitle(), form.getDescription());
     }
@@ -39,6 +42,12 @@ class PunishmentController {
     @ResponseBody
     public List<Punishment> listPunishment() {
         return punishmentRepository.list();
+    }
+
+    @ResponseStatus(value=HttpStatus.BAD_REQUEST, reason="data are not valid")
+    @ExceptionHandler(IllegalArgumentException.class)
+    public void dataNotValid() {
+        // Nothing to do
     }
 
 

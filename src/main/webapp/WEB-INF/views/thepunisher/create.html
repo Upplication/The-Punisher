@@ -1,12 +1,51 @@
 <!DOCTYPE html>
 <html>
+    <head>
+        <script src="//code.jquery.com/jquery-2.1.0.min.js"></script>
+    </head>
     <body>
-        <form action="save-punishment">
+        <form id="save-punishment-form" action="save-punishment" method="POST">
             <input type="text" name="title"/>
             <input type="text" name="description"/>
             <input type="submit"/>
         </form>
 
         <div id="list-punishments"></div>
+
+        <script>
+            //callback handler for form submit
+            $("#save-punishment-form").submit(function(e)
+            {
+               // not works var postData = $(this).serialize();
+                var formData = {
+                    'name' 				: $('input[name=title]').val(),
+                    'description' 		: $('input[name=description]').val()
+                };
+                var formURL = $(this).attr("action");
+                $.ajax(
+                        {
+                            url : formURL,
+                            type: "POST",
+                            data : formData,
+                            //processData : false,
+                            dataType: "json",
+                            contentType: 'application/json;charset=utf-8',
+                            success:function(data, textStatus, jqXHR)
+                            {
+                                //data: return data from server
+                                alert("todo bien con la data_ " + data);
+                            },
+                            error: function(jqXHR, textStatus, errorThrown)
+                            {
+                                //if fails
+                                alert("todo mal el estado: " + textStatus);
+                            }
+                        });
+                e.preventDefault(); //STOP default action
+                e.unbind(); //unbind. to stop multiple form submit.
+            });
+
+        </script>
+
     </body>
 </html>

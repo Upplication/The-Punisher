@@ -91,6 +91,35 @@ public class PunishmentRepositoryIntegrationTest {
         assertEquals(punishmentBD.getDescription(), description);
     }
 
+    // get by title
+
+    @Test
+    public void get_by_title_then_return_persisted_title(){
+        final String title = "title";
+
+        Punishment expected = punishmentRepository.create(title, "description");
+        Punishment actual = punishmentRepository.getByTitle(title);
+
+        assertEquals(expected.getId(), actual.getId());
+        assertEquals(expected.getTitle(), actual.getTitle());
+    }
+
+    @Test
+    public void get_by_title_unknown_then_return_null(){
+
+        Punishment actual = punishmentRepository.getByTitle("");
+
+        assertEquals(null, actual);
+    }
+
+    @Test
+    public void get_by_title_another_unknown_then_return_null(){
+
+        Punishment actual = punishmentRepository.getByTitle("adadasdad");
+
+        assertEquals(null, actual);
+    }
+
     // list
 
     @Test
