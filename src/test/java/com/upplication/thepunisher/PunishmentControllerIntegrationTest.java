@@ -132,9 +132,13 @@ public class PunishmentControllerIntegrationTest {
 
     @Test
     public void delete_to_remove_punishment_with_invalid_id_should_fail() throws Exception {
+        Punishment p = createPunishment("title6");
+
         mockMvc.perform(delete("/punishment/" + 900)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError());
+
+        assertNotNull(getPunishment(p.getId()));
     }
 
     @Test
