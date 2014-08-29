@@ -1,10 +1,6 @@
 package com.upplication.config;
 
-/**
- * Created by jarnaiz on 30/07/2014.
- */
 
-import com.upplication.Application;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.context.annotation.Bean;
@@ -12,12 +8,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.TransactionManagementConfigurer;
@@ -29,7 +22,7 @@ import java.util.Properties;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(basePackageClasses = com.upplication.thepunisher.Application.class)
-public class JpaTestConfig implements TransactionManagementConfigurer, DataSourceConfig  {
+public class PunishJpaTestConfig implements TransactionManagementConfigurer, DataSourceConfig {
 
     @Value("${dataSource.driverClassName}")
     private String driver;
@@ -43,7 +36,6 @@ public class JpaTestConfig implements TransactionManagementConfigurer, DataSourc
     private String dialect;
     @Value("${hibernate.hbm2ddl.auto}")
     private String hbm2ddlAuto;
-
 
 
     @Bean
