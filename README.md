@@ -19,7 +19,7 @@ ATDD for:
  - Providing a coverage of 100% will facilitate us to fix bugs 
 - Learn to make good test, unit tests and integration tests.
 
-Rating: 
+Techincal goals review/evaluation:
 
 - Rate 0 to 10 examples or scope on the day of your fellow training 
 - Rate of 0 to 10 meeting the principles SOLID 
