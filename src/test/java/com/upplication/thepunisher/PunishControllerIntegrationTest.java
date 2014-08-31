@@ -342,6 +342,12 @@ public class PunishControllerIntegrationTest {
                 .andExpect(xpath("//div[@id=\"list-punishments\"]").exists());
     }
 
+    @Test
+    public void create_punishment_add_first_to_the_list_of_punishments(){
+        // TODO: htmlunit claro que si
+        // http://spring.io/blog/2014/03/25/spring-mvc-test-with-htmlunit
+    }
+
     // helpers
 
     private PunishmentForm createPunishmentData(String title, String description) {

@@ -16,33 +16,29 @@
             //callback handler for form submit
             $("#save-punishment-form").submit(function(e)
             {
-               // not works var postData = $(this).serialize();
                 var formData = {
                     'title' 			: $('input[name=title]').val(),
                     'description' 		: $('input[name=description]').val()
                 };
-                var formURL = $(this).attr("action");
                 $.ajax(
                         {
-                            url : formURL,
+                            url : $(this).attr("action"),
                             type: "POST",
                             data : JSON.stringify(formData),
-                            //processData : false,
                             dataType: "json",
-                            contentType: 'application/json;charset=utf-8',
+                            contentType: 'application/json',
                             success:function(data, textStatus, jqXHR)
                             {
-                                //data: return data from server
-                                alert("todo bien con la data_ " + data);
+                               console.log(data);
                             },
                             error: function(jqXHR, textStatus, errorThrown)
                             {
-                                //if fails
-                                alert("todo mal el estado: " + textStatus);
+                               // TODO: error page or something.
                             }
                         });
+
+
                 e.preventDefault(); //STOP default action
-                e.unbind(); //unbind. to stop multiple form submit.
             });
 
         </script>
