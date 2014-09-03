@@ -2,7 +2,7 @@
 
 App to improve the performance of the company culture. 
 When some of the company rules are broken by a teammate, like being late or not commenting a commit correctly, this app punishes the fellow with a social punishment improving relations with the company and its environment by forcing it to make a social punishment like: 
-- Buy cakes for your team or others
+- Review javadoc and add all the params descriptions, and return, and throws...
 - Clean up the code or desktops or whatever ...;) 
 - Be imaginative
 
