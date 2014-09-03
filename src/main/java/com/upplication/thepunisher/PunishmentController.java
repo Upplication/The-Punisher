@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -70,6 +71,14 @@ public class PunishmentController {
         response.put("punishments", punishmentRepository.getAll());
 
         return response;
+    }
+
+    @RequestMapping(
+            value = "/index",
+            method = RequestMethod.GET
+    )
+    public String index() {
+        return "thepunisher/index";
     }
 
 }
