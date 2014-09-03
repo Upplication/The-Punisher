@@ -35,4 +35,8 @@ Once we have all rated, explain the criteria we used to rate.
 
 [gorka](https://github.com/Upplication/The-Punisher/tree/gorka): [![Build Status](https://travis-ci.org/Upplication/The-Punisher.svg?branch=gorka)](https://travis-ci.org/Upplication/The-Punisher) [![Coverage Status](https://coveralls.io/repos/Upplication/The-Punisher/badge.png?branch=gorka)](https://coveralls.io/r/Upplication/The-Punisher?branch=gorka)
 
+[mrk992](https://github.com/Upplication/The-Punisher/tree/mrk992): [![Build Status](https://travis-ci.org/Upplication/The-Punisher.svg?branch=mrk992)](https://travis-ci.org/Upplication/The-Punisher) [![Coverage Status](https://coveralls.io/repos/Upplication/The-Punisher/badge.png?branch=mrk992)](https://coveralls.io/r/Upplication/The-Punisher?branch=mrk992)
+
+[llamas](https://github.com/Upplication/The-Punisher/tree/llamas): [![Build Status](https://travis-ci.org/Upplication/The-Punisher.svg?branch=llamas)](https://travis-ci.org/Upplication/The-Punisher) [![Coverage Status](https://coveralls.io/repos/Upplication/The-Punisher/badge.png?branch=llamas)](https://coveralls.io/r/Upplication/The-Punisher?branch=llamas)
+
 [jarnaiz](https://github.com/Upplication/The-Punisher/tree/jarnaiz): [![Build Status](https://travis-ci.org/Upplication/The-Punisher.svg?branch=jarnaiz)](https://travis-ci.org/Upplication/The-Punisher) [![Coverage Status](https://coveralls.io/repos/Upplication/The-Punisher/badge.png?branch=jarnaiz)](https://coveralls.io/r/Upplication/The-Punisher?branch=jarnaiz)
