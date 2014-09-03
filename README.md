@@ -1,6 +1,6 @@
 The-Punisher
 ============
-[![Build Status](https://travis-ci.org/Upplication/The-Punisher.svg?branch=llamas)](https://travis-ci.org/Upplication/The-Punisher) [![Coverage Status](https://coveralls.io/repos/Upplication/The-Punisher/badge.png?branch=llamas)](https://coveralls.io/r/Upplication/The-Punisher?branch=llamas)
+[![Build Status](https://travis-ci.org/Upplication/The-Punisher.svg?branch=jarnaiz)](https://travis-ci.org/Upplication/The-Punisher) [![Coverage Status](https://coveralls.io/repos/Upplication/The-Punisher/badge.png?branch=jarnaiz)](https://coveralls.io/r/Upplication/The-Punisher?branch=jarnaiz)
 
 ## Roles
 
@@ -20,10 +20,10 @@ Usuario: usuario que utiliza la aplicación ya configurada
  - [x] Como Administrador no puedo añadir un castigo con un título vacío.
  - [x] Como Administrador no puedo añadir un castigo con una descripción vacía.
  - [ ] Como Administrador quiero ver una pantalla donde introducir el título y la descripción y un botón enviar para guardar el objeto
- - -- [x] Como Administrador visualizo un campo título.
- - -- [x] Como Administrador visualizo un campo descripción
- - -- [x] Como Administrador tengo un botón enviar
- - -- [ ] Como Administrador si no relleno el campo título y pulso en envíar se muestra un mensaje indicando que el título es obligatorio
+ - [x] -- Como Administrador visualizo un campo título.
+ - [x] -- Como Administrador visualizo un campo descripción
+ - [x] -- Como Administrador tengo un botón enviar
+ - [ ] -- Como Administrador si no relleno el campo título y pulso en envíar se muestra un mensaje indicando que el título es obligatorio
  -  - [ ] Como Administrador si no relleno el campo descripción y pulso en envíar se muestra un mensaje indicando que la descripción es obligatorio. ¿javascript testing?
  -  - [ ] Como Administrador si relleno un título y una descripción y pulso en envíar y no existe ya un título igual el sistema me indica que se ha añadido correctamente y se me muestra el castigo en la lista de castigos. ¿javascript testing?
 - [ ] Como Administrador quiero ver un listado de castigos con título y descripción ordenados por orden alfabético del título.
