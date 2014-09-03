@@ -7,7 +7,7 @@ When some of the company rules are broken by a teammate, like being late or not 
 - Be imaginative
 
 
-## Technical Goals 
+## Developers Goals 
 
 ATDD for: 
 
