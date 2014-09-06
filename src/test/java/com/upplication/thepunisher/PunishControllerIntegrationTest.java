@@ -1,5 +1,8 @@
 package com.upplication.thepunisher;
 
+import com.gargoylesoftware.htmlunit.*;
+import com.gargoylesoftware.htmlunit.html.*;
+import com.gargoylesoftware.htmlunit.javascript.host.html.HTMLDivElement;
 import com.upplication.config.PunishJpaTestConfig;
 import com.upplication.config.PunishWebTestConfig;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -13,17 +16,26 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.htmlunit.DelegatingWebConnection;
+import org.springframework.test.web.servlet.htmlunit.MockMvcWebConnection;
+import org.springframework.test.web.servlet.htmlunit.matchers.UrlRegexRequestMatcher;
+import org.springframework.test.web.servlet.htmlunit.webdriver.MockMvcHtmlUnitDriver;
 import org.springframework.test.web.servlet.result.ContentResultMatchers;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.inject.Inject;
+import javax.xml.xpath.XPathExpressionException;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URL;
+import java.util.List;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -40,12 +52,24 @@ public class PunishControllerIntegrationTest {
     @Inject
     protected WebApplicationContext wac;
     protected MockMvc mockMvc;
+    protected WebClient webClient;
+
 
     @Autowired PunishmentRepository punishmentRepository;
 
     @Before
     public void before() {
         this.mockMvc = webAppContextSetup(this.wac).build();
+        webClient = new WebClient(BrowserVersion.FIREFOX_17);
+       // webClient.getOptions().setThrowExceptionOnScriptError(false);
+        webClient.addRequestHeader("Accept-Language" , "es-ES");
+       // new MockMvcHtmlUnitDriver(mockMvc, true)
+
+        UrlRegexRequestMatcher cdnMatcher = new UrlRegexRequestMatcher(".*?//code.jquery.com/.*");
+        WebConnection httpConnection = new HttpWebConnection(webClient);
+        WebConnection webConnection = new DelegatingWebConnection(new MockMvcWebConnection(mockMvc), new DelegatingWebConnection.DelegateWebConnection(cdnMatcher, httpConnection));
+        webClient.setWebConnection(webConnection);
+        webClient.setAjaxController(new NicelyResynchronizingAjaxController());
         // TODO: how to set transactional this method only and do: entityManager.createQuery("delete from Punishment").executeUpdate();
         punishmentRepository.deleteAll();
     }
@@ -343,9 +367,76 @@ public class PunishControllerIntegrationTest {
     }
 
     @Test
-    public void create_punishment_add_first_to_the_list_of_punishments(){
+    public void create_punishment_add_first_to_the_list_of_punishments() throws IOException {
         // TODO: htmlunit claro que si
         // http://spring.io/blog/2014/03/25/spring-mvc-test-with-htmlunit
+        HtmlPage page =
+                webClient.getPage("http://localhost/the-punisher/create-punishment");
+
+        HtmlForm form = page.getHtmlElementById("save-punishment-form");
+        HtmlTextInput titleInput = page.getElementByName("title");
+        titleInput.setValueAttribute("Spring Rocks");
+        HtmlTextInput descriptionInput = page.getElementByName("description");
+        descriptionInput.setText("In case you didn't know, Spring Rocks!");
+        HtmlSubmitInput submit =
+                form.getOneHtmlElementByAttribute("input", "type", "submit");
+        submit.click();
+
+        // check
+
+
+        HtmlDivision div = page.getHtmlElementById("list-punishments");
+        HtmlSpan spanTitle = div.getFirstByXPath("div/span[@class=\"title\"]");
+        HtmlSpan spanDesc = div.getFirstByXPath("div/span[@class=\"description\"]");
+
+        assertEquals(1, div.getHtmlElementsByTagName("div").size());
+        assertEquals("Spring Rocks", spanTitle.getTextContent());
+        assertEquals("In case you didn't know, Spring Rocks!", spanDesc.getTextContent());
+
+    }
+
+    @Test
+    public void create_punishment_page_get_all_list_of_punishments() throws Exception {
+        // insert to the list
+        punishmentRepository.create("title1", "desc1");
+        punishmentRepository.create("title2", "desc2");
+
+        HtmlPage page =
+                webClient.getPage("http://localhost/the-punisher/create-punishment");
+
+        HtmlDivision div = page.getHtmlElementById("list-punishments");
+        List<HtmlSpan> spanTitle = (List<HtmlSpan>)div.getByXPath("div/span[@class=\"title\"]");
+        List<HtmlSpan> spanDesc = (List<HtmlSpan>)div.getByXPath("div/span[@class=\"description\"]");
+
+        assertEquals(2, div.getHtmlElementsByTagName("div").size());
+        assertEquals(2, spanTitle.size());
+        assertEquals(2, spanDesc.size());
+        assertEquals("title1", spanTitle.get(0).getTextContent());
+        assertEquals("title2", spanTitle.get(1).getTextContent());
+        assertEquals("desc1", spanDesc.get(0).getTextContent());
+        assertEquals("desc2", spanDesc.get(1).getTextContent());
+    }
+
+    @Test
+    public void create_punishment_page_get_another_all_list_of_punishments() throws Exception {
+        // insert to the list
+        punishmentRepository.create("bbbb", "desc1");
+        punishmentRepository.create("aaaa", "desc2");
+
+        HtmlPage page =
+                webClient.getPage("http://localhost/the-punisher/create-punishment");
+
+        HtmlDivision div = page.getHtmlElementById("list-punishments");
+        List<HtmlSpan> spanTitle = (List<HtmlSpan>)div.getByXPath("div/span[@class=\"title\"]");
+        List<HtmlSpan> spanDesc = (List<HtmlSpan>)div.getByXPath("div/span[@class=\"description\"]");
+
+        assertEquals(2, div.getHtmlElementsByTagName("div").size());
+        assertEquals(2, spanTitle.size());
+        assertEquals(2, spanDesc.size());
+        assertEquals("aaaa", spanTitle.get(0).getTextContent());
+        assertEquals("bbbb", spanTitle.get(1).getTextContent());
+        assertEquals("desc2", spanDesc.get(0).getTextContent());
+        assertEquals("desc1", spanDesc.get(1).getTextContent());
     }
 
     // helpers

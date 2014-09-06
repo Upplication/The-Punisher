@@ -16,4 +16,6 @@
 	</root>
 
 	<logger name="com.upplication" level="ALL" />
+	<logger name="com.gargoylesoftware.htmlunit.WebConsole" level="ALL" />
+	<logger name="com.gargoylesoftware.htmlunit" level="ALL" />
 </configuration>

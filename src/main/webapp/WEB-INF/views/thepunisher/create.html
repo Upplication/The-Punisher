@@ -2,6 +2,62 @@
 <html>
     <head>
         <script src="//code.jquery.com/jquery-2.1.0.min.js"></script>
+
+        <script type="text/javascript">
+            console.log("loading custom library");
+            //callback handler for form submit
+            $( document ).ready(function() {
+                // list
+
+                $.ajax({
+                    url : "list-punishment",
+                    type: "GET",
+                    contentType: 'application/json',
+                    success:function(data, textStatus, jqXHR)
+                    {
+                        $.each(data, function(i, item) {
+                            var template = '<div><span class="title">' + item.title + '</span>' +
+                                    '<span class="description">' + item.description + '</span></div>';
+                            $("#list-punishments").append(template);
+                        });
+                    }
+                });
+
+                // save
+                $("#save-punishment-form").submit(function(e)
+                {
+                    console.log("submit");
+                    // view: http://stackoverflow.com/questions/11338774/serialize-form-data-to-json
+                    var formData = {
+                        'title' 			: $('input[name=title]').val(),
+                        'description' 		: $('input[name=description]').val()
+                    };
+                    $.ajax(
+                            {
+                                url : $(this).attr("action"),
+                                type: "POST",
+                                data : JSON.stringify(formData),
+                                dataType: "json",
+                                contentType: 'application/json',
+                                success:function(data, textStatus, jqXHR)
+                                {
+                                    var template = '<div><span class="title">' + data.title + '</span>' +
+                                        '<span class="description">' + data.description + '</span></div>';
+                                    $("#list-punishments").append(template);
+                                },
+                                error: function(jqXHR, textStatus, errorThrown)
+                                {
+                                    // TODO: error page or something.
+                                    console.log("error to submit");
+                                }
+                            });
+
+                    e.preventDefault(); //STOP default action
+                    return false;
+                });
+            });
+
+        </script>
     </head>
     <body>
         <form id="save-punishment-form" action="save-punishment" method="POST">
@@ -10,38 +66,8 @@
             <input type="submit"/>
         </form>
 
-        <div id="list-punishments"></div>
+        <div id="list-punishments">
 
-        <script>
-            //callback handler for form submit
-            $("#save-punishment-form").submit(function(e)
-            {
-                var formData = {
-                    'title' 			: $('input[name=title]').val(),
-                    'description' 		: $('input[name=description]').val()
-                };
-                $.ajax(
-                        {
-                            url : $(this).attr("action"),
-                            type: "POST",
-                            data : JSON.stringify(formData),
-                            dataType: "json",
-                            contentType: 'application/json',
-                            success:function(data, textStatus, jqXHR)
-                            {
-                               console.log(data);
-                            },
-                            error: function(jqXHR, textStatus, errorThrown)
-                            {
-                               // TODO: error page or something.
-                            }
-                        });
-
-
-                e.preventDefault(); //STOP default action
-            });
-
-        </script>
-
+        </div>
     </body>
 </html>

@@ -24,10 +24,10 @@ Usuario: usuario que utiliza la aplicación ya configurada
  - -- [x] Como Administrador visualizo un campo descripción
  - -- [x] Como Administrador tengo un botón enviar
  - -- [ ] Como Administrador si no relleno el campo título y pulso en envíar se muestra un mensaje indicando que el título es obligatorio
- -  - [ ] Como Administrador si no relleno el campo descripción y pulso en envíar se muestra un mensaje indicando que la descripción es obligatorio. ¿javascript testing?
- -  - [ ] Como Administrador si relleno un título y una descripción y pulso en envíar y no existe ya un título igual el sistema me indica que se ha añadido correctamente y se me muestra el castigo en la lista de castigos. ¿javascript testing?
-- [ ] Como Administrador quiero ver un listado de castigos con título y descripción ordenados por orden alfabético del título.
- - [ ] Como Administrador entro en la pantalla de administración de castigos y visualizo los castigos guardados anteriormente. ¿javascript testing?
+ - -- [ ] Como Administrador si no relleno el campo descripción y pulso en envíar se muestra un mensaje indicando que la descripción es obligatorio. ¿javascript testing?
+ - -- [x] Como Administrador si relleno un título y una descripción y pulso en envíar y no existe ya un título igual el sistema me indica que se ha añadido correctamente y se me muestra el castigo en la lista de castigos. ¿javascript testing?
+- [x] Como Administrador quiero ver un listado de castigos con título y descripción ordenados por orden alfabético del título.
+ - [x] Como Administrador entro en la pantalla de administración de castigos y visualizo los castigos guardados anteriormente.
  - [x] Devuelvo los resultados como JSON con el campo titulo, descripción e id.
  - [x] Devuelvo los resultados como ordenados por titulo alfabeticamente
  - [x] Devuelvo los resultados anteriormente persistidos.

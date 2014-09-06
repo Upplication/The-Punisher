@@ -4,6 +4,7 @@ package com.upplication.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import org.thymeleaf.extras.springsecurity3.dialect.SpringSecurityDialect;
 import org.thymeleaf.spring4.SpringTemplateEngine;
@@ -17,6 +18,13 @@ import org.thymeleaf.templateresolver.TemplateResolver;
 public class PunishWebTestConfig extends WebMvcConfigurationSupport {
 
     private static final String VIEWS = "/WEB-INF/views/";
+    private static final String RESOURCES_HANDLER = "/resources/";
+    private static final String RESOURCES_LOCATION = RESOURCES_HANDLER + "**";
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler(RESOURCES_HANDLER).addResourceLocations(RESOURCES_LOCATION);
+    }
 
     @Bean
     public TemplateResolver templateResolver() {
