@@ -65,7 +65,7 @@ public class PunishControllerIntegrationTest {
         webClient.addRequestHeader("Accept-Language" , "es-ES");
        // new MockMvcHtmlUnitDriver(mockMvc, true)
 
-        UrlRegexRequestMatcher cdnMatcher = new UrlRegexRequestMatcher(".*?//code.jquery.com/.*");
+        UrlRegexRequestMatcher cdnMatcher = new UrlRegexRequestMatcher("(.*?//code.jquery.com/.*)|(.*?//cdnjs.cloudflare.com/.*)");
         WebConnection httpConnection = new HttpWebConnection(webClient);
         WebConnection webConnection = new DelegatingWebConnection(new MockMvcWebConnection(mockMvc), new DelegatingWebConnection.DelegateWebConnection(cdnMatcher, httpConnection));
         webClient.setWebConnection(webConnection);
@@ -125,8 +125,8 @@ public class PunishControllerIntegrationTest {
         PunishmentForm form = createPunishmentData("hello", "description");
 
         mockMvc.perform(post("/save-punishment")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(convertObjectToJsonBytes(form)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(convertObjectToJsonBytes(form)))
                 // assert
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success", is(true)));
@@ -373,13 +373,11 @@ public class PunishControllerIntegrationTest {
         HtmlPage page =
                 webClient.getPage("http://localhost/the-punisher/create-punishment");
 
-        HtmlForm form = page.getHtmlElementById("save-punishment-form");
-        HtmlTextInput titleInput = page.getElementByName("title");
+        HtmlTextInput titleInput = getTitle(page);
         titleInput.setValueAttribute("Spring Rocks");
-        HtmlTextInput descriptionInput = page.getElementByName("description");
+        HtmlTextInput descriptionInput = getDescription(page);
         descriptionInput.setText("In case you didn't know, Spring Rocks!");
-        HtmlSubmitInput submit =
-                form.getOneHtmlElementByAttribute("input", "type", "submit");
+        HtmlSubmitInput submit = getSubmit(page);
         submit.click();
 
         // check
@@ -393,6 +391,10 @@ public class PunishControllerIntegrationTest {
         assertEquals("Spring Rocks", spanTitle.getTextContent());
         assertEquals("In case you didn't know, Spring Rocks!", spanDesc.getTextContent());
 
+    }
+
+    private HtmlTextInput getDescription(HtmlPage page) {
+        return page.getElementByName("description");
     }
 
     @Test
@@ -439,6 +441,62 @@ public class PunishControllerIntegrationTest {
         assertEquals("desc1", spanDesc.get(1).getTextContent());
     }
 
+    @Test
+    public void create_punishment_with_empty_title_then_show_message_error() throws Exception {
+        // insert to the list
+
+        HtmlPage page =
+                webClient.getPage("http://localhost/the-punisher/create-punishment");
+
+        HtmlTextInput titleInput = getTitle(page);
+        titleInput.setValueAttribute("");
+        HtmlTextInput descriptionInput = getDescription(page);
+        descriptionInput.setText("In case you didn't know, Spring Rocks!");
+        HtmlSubmitInput submit = getSubmit(page);
+        submit.click();
+
+        HtmlSpan span = page.getHtmlElementById("error");
+        assertEquals("All fields are mandatory and title should be unique", span.getTextContent());
+        assertEquals("", span.getAttribute("style"));
+    }
+
+    @Test
+    public void create_punishment_with_empty_description_then_show_message_error() throws Exception {
+        // insert to the list
+
+        HtmlPage page =
+                webClient.getPage("http://localhost/the-punisher/create-punishment");
+
+        HtmlTextInput titleInput = getTitle(page);
+        titleInput.setValueAttribute("Title");
+        HtmlTextInput descriptionInput = getDescription(page);
+        descriptionInput.setText("");
+        HtmlSubmitInput submit = getSubmit(page);
+        submit.click();
+
+        HtmlSpan span = page.getHtmlElementById("error");
+        assertEquals("All fields are mandatory and title should be unique", span.getTextContent());
+        assertEquals("", span.getAttribute("style"));
+    }
+
+    @Test
+    public void create_punishment_page_get_all_list_of_punishments_with_delete_buttom() throws Exception {
+        // insert to the list
+        Punishment punishB = punishmentRepository.create("bbbb", "desc1");
+        Punishment punishA = punishmentRepository.create("aaaa", "desc2");
+
+        HtmlPage page =
+                webClient.getPage("http://localhost/the-punisher/create-punishment");
+
+        HtmlDivision div = page.getHtmlElementById("list-punishments");
+        List<HtmlSpan> spanDelete = (List<HtmlSpan>)div.getByXPath("div/span[@class=\"delete\"]");
+
+        assertEquals(2, div.getHtmlElementsByTagName("div").size());
+        assertEquals(2, spanDelete.size());
+        assertEquals(punishA.getId() + "", spanDelete.get(0).getAttribute("data-id"));
+        assertEquals(punishB.getId() + "", spanDelete.get(1).getAttribute("data-id"));
+    }
+
     // helpers
 
     private PunishmentForm createPunishmentData(String title, String description) {
@@ -451,5 +509,13 @@ public class PunishControllerIntegrationTest {
     private byte[] convertObjectToJsonBytes(Object object) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.writeValueAsBytes(object);
+    }
+
+    private HtmlSubmitInput getSubmit(HtmlPage page) {
+        return page.getHtmlElementById("save-punishment-form").getOneHtmlElementByAttribute("input", "type", "submit");
+    }
+
+    private HtmlTextInput getTitle(HtmlPage page) {
+        return page.getElementByName("title");
     }
 }
