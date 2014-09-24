@@ -51,6 +51,16 @@ class PunishmentController {
         }
     }
 
+    @RequestMapping(
+            value = "/punishment/create",
+            method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @ResponseBody
+    public Punishment createPunishment(@Valid @RequestBody PunishmentForm req) {
+        return punishmentRepository.create(req.getTitle(), req.getDescription());
+    }
 
 
     @RequestMapping(
