@@ -26,7 +26,6 @@ class PunishmentController {
     }
 
 
-
     public static class Success {
 
         private boolean success;
@@ -50,6 +49,16 @@ class PunishmentController {
         public String getDescription() {
             return description;
         }
+    }
+
+
+
+    @RequestMapping(
+            value = "/index",
+            method = RequestMethod.GET
+    )
+    public String index() {
+        return "punisher/index";
     }
 
 }
