@@ -57,7 +57,7 @@ public class PunishWebTestConfig extends WebMvcConfigurationSupport {
         thymeleafViewResolver.setCharacterEncoding("UTF-8");
         return thymeleafViewResolver;
     }
-
+/*
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         final MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
@@ -68,4 +68,5 @@ public class PunishWebTestConfig extends WebMvcConfigurationSupport {
         converters.add(converter);
         super.configureMessageConverters(converters);
     }
+    */
 }
