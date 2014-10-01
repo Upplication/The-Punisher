@@ -9,7 +9,7 @@
     <br></br>
     Descripcion: <input type="description" name="description"></input>
     <br></br>
-    <input type="submit" value="Submit"></input>
+    <input type="submit" value="submit"></input>
 </form>
 </body>
 </html>
