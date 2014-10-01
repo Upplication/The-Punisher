@@ -1,12 +1,10 @@
 package com.upplication.thepunisher;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gargoylesoftware.htmlunit.*;
 import com.gargoylesoftware.htmlunit.html.*;
-import com.gargoylesoftware.htmlunit.javascript.host.html.HTMLDivElement;
 import com.upplication.config.PunishJpaTestConfig;
 import com.upplication.config.PunishWebTestConfig;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,16 +17,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.htmlunit.DelegatingWebConnection;
 import org.springframework.test.web.servlet.htmlunit.MockMvcWebConnection;
 import org.springframework.test.web.servlet.htmlunit.matchers.UrlRegexRequestMatcher;
-import org.springframework.test.web.servlet.htmlunit.webdriver.MockMvcHtmlUnitDriver;
-import org.springframework.test.web.servlet.result.ContentResultMatchers;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.inject.Inject;
-import javax.xml.xpath.XPathExpressionException;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URL;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -36,7 +29,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -373,15 +366,9 @@ public class PunishControllerIntegrationTest {
         HtmlPage page =
                 webClient.getPage("http://localhost/the-punisher/create-punishment");
 
-        HtmlTextInput titleInput = getTitle(page);
-        titleInput.setValueAttribute("Spring Rocks");
-        HtmlTextInput descriptionInput = getDescription(page);
-        descriptionInput.setText("In case you didn't know, Spring Rocks!");
-        HtmlSubmitInput submit = getSubmit(page);
-        submit.click();
+        submitPunishment(page, "Spring Rocks", "In case you didn't know, Spring Rocks!");
 
         // check
-
 
         HtmlDivision div = page.getHtmlElementById("list-punishments");
         HtmlSpan spanTitle = div.getFirstByXPath("div/span[@class=\"title\"]");
@@ -447,13 +434,7 @@ public class PunishControllerIntegrationTest {
 
         HtmlPage page =
                 webClient.getPage("http://localhost/the-punisher/create-punishment");
-
-        HtmlTextInput titleInput = getTitle(page);
-        titleInput.setValueAttribute("");
-        HtmlTextInput descriptionInput = getDescription(page);
-        descriptionInput.setText("In case you didn't know, Spring Rocks!");
-        HtmlSubmitInput submit = getSubmit(page);
-        submit.click();
+        submitPunishment(page, "", "In case you didn't know, Spring Rocks!");
 
         HtmlSpan span = page.getHtmlElementById("error");
         assertEquals("All fields are mandatory and title should be unique", span.getTextContent());
@@ -466,13 +447,7 @@ public class PunishControllerIntegrationTest {
 
         HtmlPage page =
                 webClient.getPage("http://localhost/the-punisher/create-punishment");
-
-        HtmlTextInput titleInput = getTitle(page);
-        titleInput.setValueAttribute("Title");
-        HtmlTextInput descriptionInput = getDescription(page);
-        descriptionInput.setText("");
-        HtmlSubmitInput submit = getSubmit(page);
-        submit.click();
+        submitPunishment(page, "Title", "");
 
         HtmlSpan span = page.getHtmlElementById("error");
         assertEquals("All fields are mandatory and title should be unique", span.getTextContent());
@@ -497,6 +472,89 @@ public class PunishControllerIntegrationTest {
         assertEquals(punishB.getId() + "", spanDelete.get(1).getAttribute("data-id"));
     }
 
+    @Test
+    public void create_punishment_page_get_all_list_of_punishments_with_delete_buttom_with_text() throws Exception {
+        // insert to the list
+        punishmentRepository.create("bbbb", "desc1");
+        punishmentRepository.create("aaaa", "desc2");
+
+        HtmlPage page =
+                webClient.getPage("http://localhost/the-punisher/create-punishment");
+
+        HtmlDivision div = page.getHtmlElementById("list-punishments");
+        List<HtmlSpan> spanDelete = (List<HtmlSpan>)div.getByXPath("div/span[@class=\"delete\"]");
+
+        assertEquals(2, div.getHtmlElementsByTagName("div").size());
+        assertEquals(2, spanDelete.size());
+        assertEquals("Delete", spanDelete.get(0).getTextContent());
+        assertEquals("Delete", spanDelete.get(0).getTextContent());
+    }
+
+    @Test
+    public void insert_punishment_then_print_the_punishment_with_delete_buttom() throws Exception {
+        HtmlPage page =
+                webClient.getPage("http://localhost/the-punisher/create-punishment");
+
+        submitPunishment(page, "hola", "desc");
+
+        HtmlDivision div = page.getHtmlElementById("list-punishments");
+        List<HtmlSpan> spanDelete = (List<HtmlSpan>)div.getByXPath("div/span[@class=\"delete\"]");
+
+        assertEquals(1, div.getHtmlElementsByTagName("div").size());
+        assertEquals(1, spanDelete.size());
+        assertNotNull(spanDelete.get(0).getAttribute("data-id"));
+    }
+
+
+    @Test
+    public void delete_punishment_then_remove_from_list() throws Exception {
+        // insert to the list
+        punishmentRepository.create("bbbb", "desc1");
+
+        HtmlPage page =
+                webClient.getPage("http://localhost/the-punisher/create-punishment");
+        HtmlDivision div = page.getHtmlElementById("list-punishments");
+        List<HtmlSpan> spanDelete = (List<HtmlSpan>)div.getByXPath("div/span[@class=\"delete\"]");
+
+        spanDelete.get(0).click();
+
+        assertEquals(0, div.getHtmlElementsByTagName("div").size());
+    }
+
+    @Test
+    public void delete_punishment_without_id_then_return_bad_request() throws Exception {
+
+        mockMvc.perform(post("/delete-punishment")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void delete_punishment_with_exists_id_then_return_status_ok() throws Exception {
+        // insert to the list
+        Punishment punishment = punishmentRepository.create("bbbb", "desc1");
+
+        PunishmentDeleteForm form = new PunishmentDeleteForm();
+        form.setId(punishment.getId());
+
+        mockMvc.perform(post("/delete-punishment")
+                .content(convertObjectToJsonBytes(form))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void delete_punishment_with_not_exists_id_then_return_status_bad_request() throws Exception {
+        // insert to the list
+        PunishmentDeleteForm form = new PunishmentDeleteForm();
+        form.setId(1337);
+
+        mockMvc.perform(post("/delete-punishment")
+                .content(convertObjectToJsonBytes(form))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
     // helpers
 
     private PunishmentForm createPunishmentData(String title, String description) {
@@ -509,6 +567,14 @@ public class PunishControllerIntegrationTest {
     private byte[] convertObjectToJsonBytes(Object object) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.writeValueAsBytes(object);
+    }
+    private void submitPunishment(HtmlPage page, String title, String description) throws IOException {
+        HtmlTextInput titleInput = getTitle(page);
+        titleInput.setValueAttribute(title);
+        HtmlTextInput descriptionInput = getDescription(page);
+        descriptionInput.setText(description);
+        HtmlSubmitInput submit = getSubmit(page);
+        submit.click();
     }
 
     private HtmlSubmitInput getSubmit(HtmlPage page) {

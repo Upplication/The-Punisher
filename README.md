@@ -33,11 +33,15 @@ Usuario: usuario que utiliza la aplicación ya configurada
  - [x] Devuelvo los resultados anteriormente persistidos.
 - [ ] Como Administrador quiero eliminar un castigo del listado para que no se muestre en la ruleta
  - [x] Como Adinistrador quiero ver la opción de eliminar un castigo del listado
+ - [x] Como Adinistrador quiero que si inserto un nuevo castigo, este disponga de la opción de eliminar.
  - [ ] Como Administrador quiero que se me muestre un modal de confirmacion cuando intento eliminar algún castigo
- - [ ] Como Administrador quiero eliminar un castigo y que no se muestre en el listado de administración de castigos
+ - [x] Como Administrador quiero eliminar un castigo y que no se muestre en el listado de administración de castigos
  - [ ] Como Administrador quiero eliminar un castigo y que no se muestre en la ruleta de castigos
 - [ ] Como Administrador quiero modificar un castigo del listado.
 
+## ATDD técnico
+
+- [x] Configurar JacksonMapper para que acepte single quote y no quote vars como JSON http://stackoverflow.com/questions/6591388/configure-jackson-to-deserialize-single-quoted-invalid-json
 
 
 ## Notas

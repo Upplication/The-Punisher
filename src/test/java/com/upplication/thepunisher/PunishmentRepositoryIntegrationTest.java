@@ -180,4 +180,16 @@ public class PunishmentRepositoryIntegrationTest {
         assertEquals(punishment1.getId(), persisted.get(1).getId());
     }
 
+    @Test
+    public void delete_punishment_then_cant_return_with_the_same_id(){
+
+        Punishment punishment1 = punishmentRepository.create("zzzz", "description");
+
+        punishmentRepository.delete(punishment1.getId());
+
+        List<Punishment> persisted = punishmentRepository.list();
+
+        assertEquals(0, persisted.size());
+    }
+
 }

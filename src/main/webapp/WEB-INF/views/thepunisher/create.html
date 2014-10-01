@@ -9,8 +9,35 @@
             console.log("loading custom library");
             //callback handler for form submit
             $( document ).ready(function() {
-                // list
 
+                $("#list-punishments").on("click", ".delete", function() {
+
+                    var $deleteSpan = $(this);
+
+                    $.ajax(
+                            {
+                                url : 'delete-punishment',
+                                type: "POST",
+                                data : JSON.stringify({'id' : parseInt($deleteSpan.attr('data-id'))}),
+                                dataType: "json",
+                                contentType: 'application/json',
+                                success:function(data, textStatus, jqXHR)
+                                {
+                                    $deleteSpan.parent().remove();
+                                },
+                                error: function(jqXHR, textStatus, errorThrown)
+                                {
+                                    $("#error").show();
+                                    // TODO: error page or something.
+                                    console.log("error to submit");
+                                    console.log(jqXHR);
+                                    console.log(textStatus);
+                                    console.log(errorThrown);
+                                    console.log("error to submit");
+                                }
+                            });
+                });
+                // list
                 $.ajax({
                     url : "list-punishment",
                     type: "GET",
@@ -97,7 +124,7 @@
             <div>
                 <span class="title">{{title}}</span>
                 <span class="description">{{description}}</span>
-                <span class="delete" data-id="{{id}}"></span>
+                <span class="delete" data-id="{{id}}">Delete</span>
             </div>
         </script>
     </body>

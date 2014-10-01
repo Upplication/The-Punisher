@@ -91,6 +91,15 @@ public class PunishControllerTest {
     }
 
 
+    @Test
+    public void delete_punishment_then_call_repository_to_delete() {
+        PunishmentDeleteForm form = new PunishmentDeleteForm();
+        form.setId(1);
+        controller.deletePunishment(form);
+
+        verify(punishmentRepository).delete(eq(1));
+    }
+
 
     //
     // helpers

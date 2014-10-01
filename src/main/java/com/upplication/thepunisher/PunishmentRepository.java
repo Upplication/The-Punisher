@@ -48,4 +48,9 @@ public class PunishmentRepository {
             return null;
         }
     }
+    @Transactional
+    public void delete(int idPunishment) {
+        Punishment punishment = entityManager.find(Punishment.class, idPunishment);
+        entityManager.remove(punishment);
+    }
 }

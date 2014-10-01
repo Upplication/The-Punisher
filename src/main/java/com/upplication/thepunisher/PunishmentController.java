@@ -38,6 +38,15 @@ class PunishmentController {
         return "thepunisher/create";
     }
 
+    @RequestMapping(value = "delete-punishment",
+            method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public Boolean deletePunishment(@Valid @RequestBody PunishmentDeleteForm form) {
+        punishmentRepository.delete(form.getId());
+        return true;
+    }
+
 
     @RequestMapping(value = "list-punishment")
     @ResponseBody
@@ -50,6 +59,7 @@ class PunishmentController {
     public void dataNotValid() {
         // Nothing to do
     }
+
 
 
     public static class Success {
