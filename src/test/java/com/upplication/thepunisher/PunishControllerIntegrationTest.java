@@ -30,6 +30,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -487,7 +488,7 @@ public class PunishControllerIntegrationTest {
         assertEquals(2, div.getHtmlElementsByTagName("div").size());
         assertEquals(2, spanDelete.size());
         assertEquals("Delete", spanDelete.get(0).getTextContent());
-        assertEquals("Delete", spanDelete.get(0).getTextContent());
+        assertEquals("Delete", spanDelete.get(1).getTextContent());
     }
 
     @Test
@@ -553,6 +554,40 @@ public class PunishControllerIntegrationTest {
                 .content(convertObjectToJsonBytes(form))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
+    }
+
+    // edit
+
+    @Test
+    public void create_punishment_then_view_edit_option_aside_the_existing_punishments() throws Exception {
+        punishmentRepository.create("bbbb", "desc1");
+
+        HtmlPage page =
+                webClient.getPage("http://localhost/the-punisher/create-punishment");
+        HtmlDivision div = page.getHtmlElementById("list-punishments");
+
+        List<HtmlSpan> spanEdit = (List<HtmlSpan>)div.getByXPath("div/span[@class=\"edit\"]");
+
+        assertEquals(1, spanEdit.size());
+        assertNotNull(spanEdit.get(0).getAttribute("data-id"));
+    }
+
+    @Test
+    public void create_punishment_page_get_all_list_of_punishments_with_edit_buttom_with_text() throws Exception {
+        // insert to the list
+        punishmentRepository.create("bbbb", "desc1");
+        punishmentRepository.create("aaaa", "desc2");
+
+        HtmlPage page =
+                webClient.getPage("http://localhost/the-punisher/create-punishment");
+
+        HtmlDivision div = page.getHtmlElementById("list-punishments");
+        List<HtmlSpan> spanDelete = (List<HtmlSpan>)div.getByXPath("div/span[@class=\"edit\"]");
+
+        assertEquals(2, div.getHtmlElementsByTagName("div").size());
+        assertEquals(2, spanDelete.size());
+        assertEquals("Edit", spanDelete.get(0).getTextContent());
+        assertEquals("Edit", spanDelete.get(1).getTextContent());
     }
 
     // helpers

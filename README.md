@@ -38,6 +38,10 @@ Usuario: usuario que utiliza la aplicación ya configurada
  - [x] Como Administrador quiero eliminar un castigo y que no se muestre en el listado de administración de castigos
  - [ ] Como Administrador quiero eliminar un castigo y que no se muestre en la ruleta de castigos
 - [ ] Como Administrador quiero modificar un castigo del listado.
+ - [x] Como Administrador quiero ver la opción de editar un casigo del listado
+ - [ ] Como Administrador quiero editar el nombre de un castigo y que se quede guardado en el listado
+ - [ ] Como Administrador quiero editar la descripción de un castigo y que se quede guardado en el listado
+ - [ ] Como Administrador si edito el nombre de un castigo y ya existe el nuevo, el sistema avisa con un mensaje.
 
 ## ATDD técnico
 
