@@ -30,7 +30,6 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -395,8 +394,8 @@ public class PunishControllerIntegrationTest {
                 webClient.getPage("http://localhost/the-punisher/create-punishment");
 
         HtmlDivision div = page.getHtmlElementById("list-punishments");
-        List<HtmlSpan> spanTitle = (List<HtmlSpan>)div.getByXPath("div/span[@class=\"title\"]");
-        List<HtmlSpan> spanDesc = (List<HtmlSpan>)div.getByXPath("div/span[@class=\"description\"]");
+        List<HtmlSpan> spanTitle = getTitles(div);
+        List<HtmlSpan> spanDesc = getDescriptions(div);
 
         assertEquals(2, div.getHtmlElementsByTagName("div").size());
         assertEquals(2, spanTitle.size());
@@ -417,8 +416,8 @@ public class PunishControllerIntegrationTest {
                 webClient.getPage("http://localhost/the-punisher/create-punishment");
 
         HtmlDivision div = page.getHtmlElementById("list-punishments");
-        List<HtmlSpan> spanTitle = (List<HtmlSpan>)div.getByXPath("div/span[@class=\"title\"]");
-        List<HtmlSpan> spanDesc = (List<HtmlSpan>)div.getByXPath("div/span[@class=\"description\"]");
+        List<HtmlSpan> spanTitle = getTitles(div);
+        List<HtmlSpan> spanDesc = getDescriptions(div);
 
         assertEquals(2, div.getHtmlElementsByTagName("div").size());
         assertEquals(2, spanTitle.size());
@@ -566,7 +565,7 @@ public class PunishControllerIntegrationTest {
                 webClient.getPage("http://localhost/the-punisher/create-punishment");
         HtmlDivision div = page.getHtmlElementById("list-punishments");
 
-        List<HtmlSpan> spanEdit = (List<HtmlSpan>)div.getByXPath("div/span[@class=\"edit\"]");
+        List<HtmlSpan> spanEdit = getEditButtons(div);
 
         assertEquals(1, spanEdit.size());
         assertNotNull(spanEdit.get(0).getAttribute("data-id"));
@@ -582,7 +581,7 @@ public class PunishControllerIntegrationTest {
                 webClient.getPage("http://localhost/the-punisher/create-punishment");
 
         HtmlDivision div = page.getHtmlElementById("list-punishments");
-        List<HtmlSpan> spanDelete = (List<HtmlSpan>)div.getByXPath("div/span[@class=\"edit\"]");
+        List<HtmlSpan> spanDelete = getEditButtons(div);
 
         assertEquals(2, div.getHtmlElementsByTagName("div").size());
         assertEquals(2, spanDelete.size());
@@ -590,7 +589,179 @@ public class PunishControllerIntegrationTest {
         assertEquals("Edit", spanDelete.get(1).getTextContent());
     }
 
+    @Test
+    public void edit_punishment_click_edit_then_change_title_and_description_text_by_input_text_and_the_edit_button_with_text_save() throws Exception {
+        // insert to the list
+        punishmentRepository.create("aaaa", "desc2");
+
+        HtmlPage page =
+                webClient.getPage("http://localhost/the-punisher/create-punishment");
+
+        HtmlDivision div = page.getHtmlElementById("list-punishments");
+        List<HtmlSpan> spanEdit = getEditButtons(div);
+
+        spanEdit.get(0).click();
+
+        HtmlInput titleInput = ((List<HtmlInput>)div.getByXPath("div/input[@name=\"title\"]")).get(0);
+        HtmlInput descriptionInput =  ((List<HtmlInput>)div.getByXPath("div/input[@name=\"description\"]")).get(0);
+
+        assertEquals("aaaa",titleInput.getValueAttribute());
+        assertEquals("desc2",descriptionInput.getValueAttribute());
+        assertEquals("Save", spanEdit.get(0).getTextContent());
+    }
+
+    @Test
+    public void edit_punishment_with_id_and_change_title_then_change_in_list_in_same_position() throws Exception {
+        // insert to the list
+        punishmentRepository.create("aaaa", "desc2");
+
+        HtmlPage page =
+                webClient.getPage("http://localhost/the-punisher/create-punishment");
+
+        HtmlDivision div = page.getHtmlElementById("list-punishments");
+        List<HtmlSpan> spanEdit = getEditButtons(div);
+
+        spanEdit.get(0).click();
+
+        HtmlTextInput titleInput = getEditedTitle(div).get(0);
+        titleInput.setText("bubbubub");
+
+        spanEdit.get(0).click();
+
+        List<HtmlSpan> spanTitle = getTitles(div);
+        List<HtmlSpan> spanDesc = getDescriptions(div);
+
+        assertEquals(1, div.getHtmlElementsByTagName("div").size());
+        assertEquals(1, spanTitle.size());
+        assertEquals(1, spanDesc.size());
+        assertEquals("bubbubub", spanTitle.get(0).getTextContent());
+        assertEquals("desc2", spanDesc.get(0).getTextContent());
+    }
+
+    @Test
+    public void edit_punishment_without_id_then_return_bad_request() throws Exception {
+
+        mockMvc.perform(post("/edit-punishment")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void edit_punishment_with_exists_id_and_title_and_description_then_return_status_ok() throws Exception {
+        // insert to the list
+        Punishment punishment = punishmentRepository.create("bbbb", "desc1");
+
+        PunishmentEditForm form = new PunishmentEditForm();
+        form.setId(punishment.getId());
+        form.setTitle("title");
+        form.setDescription("descrtiption");
+
+        mockMvc.perform(post("/edit-punishment")
+                .content(convertObjectToJsonBytes(form))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void edit_punishment_with_exists_id_and_null_title_then_return_status_bad_request() throws Exception {
+        // insert to the list
+        Punishment punishment = punishmentRepository.create("bbbb", "desc1");
+
+        PunishmentEditForm form = new PunishmentEditForm();
+        form.setId(punishment.getId());
+        form.setDescription("descrtiption");
+
+        mockMvc.perform(post("/edit-punishment")
+                .content(convertObjectToJsonBytes(form))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void edit_punishment_with_exists_id_and_null_description_then_return_status_bad_request() throws Exception {
+        // insert to the list
+        Punishment punishment = punishmentRepository.create("bbbb", "desc1");
+
+        PunishmentEditForm form = new PunishmentEditForm();
+        form.setId(punishment.getId());
+        form.setTitle("adads");
+
+        mockMvc.perform(post("/edit-punishment")
+                .content(convertObjectToJsonBytes(form))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void edit_punishment_with_null_id_then_return_status_bad_request() throws Exception {
+        PunishmentEditForm form = new PunishmentEditForm();
+        form.setTitle("adads");
+        form.setDescription("131dasdasdas");
+
+        mockMvc.perform(post("/edit-punishment")
+                .content(convertObjectToJsonBytes(form))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void edit_punishment_with_not_exists_id_then_return_status_bad_request() throws Exception {
+        // insert to the list
+        PunishmentEditForm form = new PunishmentEditForm();
+        form.setId(1337);
+        form.setTitle("title");
+        form.setDescription("descrtiption");
+
+        mockMvc.perform(post("/edit-punishment")
+                .content(convertObjectToJsonBytes(form))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    //@Test
+    public void edit_punishment_set_title_equal_another_then_show_message_error() throws Exception {
+        // insert to the list
+        punishmentRepository.create("aaaa", "desc2");
+        punishmentRepository.create("bbbb", "desc2");
+
+        HtmlPage page =
+                webClient.getPage("http://localhost/the-punisher/create-punishment");
+
+        HtmlDivision div = page.getHtmlElementById("list-punishments");
+        List<HtmlSpan> spanEdit = getEditButtons(div);
+        // edit a.
+        spanEdit.get(0).click();
+
+        HtmlTextInput titleInput = getEditedTitle(div).get(0);
+        titleInput.setText("bbbb");
+
+        spanEdit.get(0).click();
+
+        List<HtmlSpan> spanError = (List<HtmlSpan>)div.getByXPath("div/span[@class=\"error\" and not(contains(@style,'display:none'))]");
+
+        assertEquals(2, div.getHtmlElementsByTagName("div").size());
+        assertEquals(1, spanError.size());
+        assertEquals("Title repeated", spanError.get(0).getTextContent());
+    }
+
     // helpers
+
+
+    private List<HtmlSpan> getDescriptions(HtmlDivision div) {
+        return (List<HtmlSpan>)div.getByXPath("div/span[@class=\"description\"]");
+    }
+
+    private List<HtmlTextInput> getEditedTitle(HtmlDivision div) {
+        return (List<HtmlTextInput>)div.getByXPath("div/input[@name=\"title\"]");
+    }
+
+    private List<HtmlSpan> getTitles(HtmlDivision div) {
+        return (List<HtmlSpan>)div.getByXPath("div/span[@class=\"title\"]");
+    }
+
+    private List<HtmlSpan> getEditButtons(HtmlDivision div) {
+        return (List<HtmlSpan>)div.getByXPath("div/span[@class=\"edit\"]");
+    }
 
     private PunishmentForm createPunishmentData(String title, String description) {
         PunishmentForm form = new PunishmentForm();

@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
 
 import java.util.List;
 
@@ -192,4 +193,66 @@ public class PunishmentRepositoryIntegrationTest {
         assertEquals(0, persisted.size());
     }
 
+    @Test
+    public void edit_title_punishment_then_return_with_the_same_id_and_different_title(){
+        Punishment punishment1 = punishmentRepository.create("zzzz", "description");
+
+        Punishment punishmntToEdit = new Punishment();
+        punishmntToEdit.setId(punishment1.getId());
+        punishmntToEdit.setTitle("new title");
+        punishmntToEdit.setDescription(punishment1.getDescription());
+
+        Punishment punishmentEdited = punishmentRepository.edit(punishmntToEdit);
+
+        assertNotNull(punishmentEdited);
+        assertEquals(punishment1.getId(), punishmentEdited.getId());
+        assertEquals("new title", punishmentEdited.getTitle());
+        assertEquals(punishment1.getDescription(), punishmentEdited.getDescription());
+    }
+
+    @Test
+    public void edit_description_punishment_then_return_with_the_same_id_and_different_description(){
+        Punishment punishment1 = punishmentRepository.create("zzzz", "description");
+
+        Punishment punishmntToEdit = new Punishment();
+        punishmntToEdit.setId(punishment1.getId());
+        punishmntToEdit.setTitle(punishment1.getTitle());
+        punishmntToEdit.setDescription("new description");
+
+        Punishment punishmentEdited = punishmentRepository.edit(punishmntToEdit);
+
+        assertNotNull(punishmentEdited);
+        assertEquals(punishment1.getId(), punishmentEdited.getId());
+        assertEquals(punishment1.getTitle(), punishmentEdited.getTitle());
+        assertEquals("new description", punishmentEdited.getDescription());
+    }
+
+    @Test
+    public void edit_punishemnt_then_get_by_id_return_changed(){
+        Punishment punishment1 = punishmentRepository.create("zzzz", "description");
+
+        Punishment punishmntToEdit = new Punishment();
+        punishmntToEdit.setId(punishment1.getId());
+        punishmntToEdit.setTitle("new title");
+        punishmntToEdit.setDescription("new description");
+
+        punishmentRepository.edit(punishmntToEdit);
+        Punishment punishmentEdited = punishmentRepository.getByTitle(punishmntToEdit.getTitle());
+
+                assertNotNull(punishmentEdited);
+        assertEquals(punishment1.getId(), punishmentEdited.getId());
+        assertEquals("new title", punishmentEdited.getTitle());
+        assertEquals("new description", punishmentEdited.getDescription());
+    }
+
+    @Test(expected = PersistenceException.class)
+    public void edit_title_punishment_with_unknown_id_then_throw_exception(){
+
+        Punishment punishmntToEdit = new Punishment();
+        punishmntToEdit.setId(12312312);
+        punishmntToEdit.setTitle("new title");
+        punishmntToEdit.setDescription("adsadasdasdasd");
+
+        punishmentRepository.edit(punishmntToEdit);
+    }
 }

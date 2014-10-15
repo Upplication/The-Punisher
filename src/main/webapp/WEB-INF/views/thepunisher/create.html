@@ -37,6 +37,78 @@
                                 }
                             });
                 });
+                // edit
+                $("#list-punishments").on("click", ".edit", function() {
+
+                    var $editSpan = $(this);
+
+                    if ($editSpan.attr("data-type") == 'edit-mode'){
+                        // view: http://stackoverflow.com/questions/11338774/serialize-form-data-to-json
+                        var formData = {
+                            'id' 			    :  $editSpan.attr('data-id'),
+                            'title' 			:  $editSpan.parent().find('input[name=title]').val(),
+                            'description' 		:  $editSpan.parent().find('input[name=description]').val()
+                        };
+
+                        $.ajax({
+                            url : 'edit-punishment',
+                            type: "POST",
+                            data : JSON.stringify(formData),
+                            dataType: "json",
+                            contentType: 'application/json',
+                            success:function(data, textStatus, jqXHR)
+                            {
+                                var template = $('#punishment-element').html();
+                                var rendered = Mustache.render(template,
+                                        {
+                                            title: formData.title,
+                                            description: formData.description,
+                                            id: formData.id
+                                        }
+                                );
+                                $divContainer = $editSpan.parent();
+                                $(rendered).insertBefore($divContainer);
+                                $divContainer.remove();
+                            },
+                            error: function(jqXHR, textStatus, errorThrown)
+                            {
+                                // TODO: error page or something.
+                                console.log("error to submit");
+                                console.log(jqXHR);
+                                console.log(textStatus);
+                                console.log(errorThrown);
+                                console.log("error to submit");
+                            }
+                        });
+
+                    }
+                    else {
+                        var $titleSpan = $editSpan.parent().find(".title");
+                        var $descriptionSpan = $editSpan.parent().find(".description");
+
+                        var inputTitle = $('<input />', {
+                            'type': 'text',
+                            'name': 'title',
+                            'value': $titleSpan.html()
+                        });
+                        inputTitle.insertBefore($titleSpan);
+                        $titleSpan.remove();
+                        inputTitle.focus();
+
+                        var inputDescription = $('<input />', {
+                            'type': 'text',
+                            'name': 'description',
+                            'value': $descriptionSpan.html()
+                        });
+                        inputDescription.insertBefore($descriptionSpan);
+                        $descriptionSpan.remove();
+
+                        $editSpan.attr("data-type", "edit-mode");
+                        $editSpan.html('Save');
+                    }
+
+
+                });
                 // list
                 $.ajax({
                     url : "list-punishment",
@@ -126,6 +198,7 @@
                 <span class="description">{{description}}</span>
                 <span class="delete" data-id="{{id}}">Delete</span>
                 <span class="edit" data-id="{{id}}">Edit</span>
+                <span class="error" style="display: none">Title repeated</span>
             </div>
         </script>
     </body>

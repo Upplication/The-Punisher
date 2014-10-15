@@ -7,6 +7,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
 import javax.validation.Valid;
 import java.util.Arrays;
 import java.util.List;
@@ -47,6 +49,19 @@ class PunishmentController {
         return true;
     }
 
+    @RequestMapping(value = "edit-punishment",
+            method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public Boolean editPunishment(@Valid @RequestBody PunishmentEditForm form) {
+        Punishment punishment = new Punishment();
+        punishment.setId(form.getId());
+        punishment.setTitle(form.getTitle());
+        punishment.setDescription(form.getDescription());
+        punishmentRepository.edit(punishment);
+        return true;
+    }
+
 
     @RequestMapping(value = "list-punishment")
     @ResponseBody
@@ -57,6 +72,12 @@ class PunishmentController {
     @ResponseStatus(value=HttpStatus.BAD_REQUEST, reason="data are not valid")
     @ExceptionHandler(IllegalArgumentException.class)
     public void dataNotValid() {
+        // Nothing to do
+    }
+
+    @ResponseStatus(value=HttpStatus.BAD_REQUEST, reason="data are not valid")
+    @ExceptionHandler(PersistenceException.class)
+    public void bdNotValid() {
         // Nothing to do
     }
 
