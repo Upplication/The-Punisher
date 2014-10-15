@@ -255,4 +255,19 @@ public class PunishmentRepositoryIntegrationTest {
 
         punishmentRepository.edit(punishmntToEdit);
     }
+
+    /*
+    @Test(expected = IllegalArgumentException.class)
+    public void edit_punishemnt_with_same_title_then_throw_exception(){
+        Punishment punishment1 = punishmentRepository.create("zzzz", "description");
+        Punishment punishment2 = punishmentRepository.create("cccc", "description");
+
+        Punishment punishmntToEdit = new Punishment();
+        punishmntToEdit.setId(punishment1.getId());
+        punishmntToEdit.setTitle(punishment2.getTitle());
+        punishmntToEdit.setDescription("new description");
+
+        punishmentRepository.edit(punishmntToEdit);
+    }
+    */
 }

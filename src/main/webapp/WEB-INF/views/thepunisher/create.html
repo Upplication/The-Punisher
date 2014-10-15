@@ -72,7 +72,7 @@
                             },
                             error: function(jqXHR, textStatus, errorThrown)
                             {
-                                // TODO: error page or something.
+                                $editSpan.parent().find('.error').show();
                                 console.log("error to submit");
                                 console.log(jqXHR);
                                 console.log(textStatus);

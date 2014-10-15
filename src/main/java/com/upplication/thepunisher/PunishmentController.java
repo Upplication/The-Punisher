@@ -54,6 +54,9 @@ class PunishmentController {
             consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public Boolean editPunishment(@Valid @RequestBody PunishmentEditForm form) {
+        if (punishmentRepository.getByTitle(form.getTitle()) != null){
+            throw new IllegalArgumentException("title already exists: " + form.getTitle());
+        }
         Punishment punishment = new Punishment();
         punishment.setId(form.getId());
         punishment.setTitle(form.getTitle());

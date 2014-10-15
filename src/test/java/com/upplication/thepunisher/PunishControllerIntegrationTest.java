@@ -718,7 +718,7 @@ public class PunishControllerIntegrationTest {
                 .andExpect(status().isBadRequest());
     }
 
-    //@Test
+    @Test
     public void edit_punishment_set_title_equal_another_then_show_message_error() throws Exception {
         // insert to the list
         punishmentRepository.create("aaaa", "desc2");
@@ -736,8 +736,8 @@ public class PunishControllerIntegrationTest {
         titleInput.setText("bbbb");
 
         spanEdit.get(0).click();
-
-        List<HtmlSpan> spanError = (List<HtmlSpan>)div.getByXPath("div/span[@class=\"error\" and not(contains(@style,'display:none'))]");
+        // NOTA: cuidado con el espacio entre display y none
+        List<HtmlSpan> spanError = (List<HtmlSpan>)div.getByXPath("div/span[@class=\"error\" and not(contains(@style,'display: none'))]");
 
         assertEquals(2, div.getHtmlElementsByTagName("div").size());
         assertEquals(1, spanError.size());
