@@ -12,6 +12,7 @@ import javax.persistence.PersistenceException;
 import javax.validation.Valid;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 class PunishmentController {
@@ -70,6 +71,14 @@ class PunishmentController {
     @ResponseBody
     public List<Punishment> listPunishment() {
         return punishmentRepository.list();
+    }
+
+    @RequestMapping(value = "roulette-punishments")
+    public String roulettePunishment(Map<String, Object> model) {
+
+        model.put("punishments", punishmentRepository.list());
+
+        return "thepunisher/roulette";
     }
 
     @ResponseStatus(value=HttpStatus.BAD_REQUEST, reason="data are not valid")

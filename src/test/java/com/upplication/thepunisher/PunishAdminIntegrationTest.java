@@ -40,7 +40,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @ContextConfiguration(classes = {PunishJpaTestConfig.class, PunishWebTestConfig.class,
         PunishmentRepository.class, PunishmentController.class,
         PunishmentForm.class})
-public class PunishControllerIntegrationTest {
+public class PunishAdminIntegrationTest {
 
     @Inject
     protected WebApplicationContext wac;

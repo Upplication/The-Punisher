@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8"/>
+        <script src="//code.jquery.com/jquery-2.1.0.min.js"></script>
+    </head>
+    <body>
+        <div th:unless="${#lists.isEmpty(punishments)}" id="roulette">
+            <span  th:each="punsish : ${punishments}" class="punish" th:text="${punsish.title}"></span>
+        </div>
+        <div th:if="${#lists.isEmpty(punishments)}" id="roulette">
+            <a href="@{/create-punishment}">Create Punishment</a>
+        </div>
+    </body>
+</html>
