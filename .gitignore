@@ -15,3 +15,4 @@ target
 hs_err_pid*
 app/.grunt/*
 app/node_modules/*
+npm-debug.log
