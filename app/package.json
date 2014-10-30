@@ -1,0 +1,27 @@
+{
+  "name": "ThePunisher",
+  "version": "0.0.1",
+  "description": "The Punisher frontend app",
+  "main": "config.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "gulp test",
+    "start": "gulp start",
+    "postinstall": "bower install"
+  },
+  "keywords": [
+    "punishments",
+    "enterprise"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "bower": "latest",
+    "gulp": "latest",
+    "gulp-karma": "latest",
+    "karma-jasmine": "latest",
+    "karma-phantomjs-launcher": "latest"
+  }
+}

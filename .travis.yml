@@ -4,6 +4,8 @@ jdk:
 - oraclejdk7
 before_install:
 - sudo sed -i 's/security.provider.9/#security.provider.9/g' $JAVA_HOME/jre/lib/security/java.security
-script: mvn clean install
+script:
+- mvn clean install
+- cd app && npm install && npm test
 after_success:
 - mvn jacoco:report coveralls:jacoco

@@ -73,12 +73,4 @@ public class PunishmentController {
         return response;
     }
 
-    @RequestMapping(
-            value = "/index",
-            method = RequestMethod.GET
-    )
-    public String index() {
-        return "thepunisher/index";
-    }
-
 }
