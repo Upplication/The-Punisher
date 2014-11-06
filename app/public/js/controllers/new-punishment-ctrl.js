@@ -1,32 +1,39 @@
 (function (app) {
     'use strict';
 
-    app.controller('NewPunishmentCtrl', ['$scope', '$http', function ($scope, $http) {
-        $scope.name = '';
-        $scope.description = '';
-        $scope.error = false;
-        $scope.success = false;
-        $scope.lastPunishment = {};
+    app.controller('NewPunishmentCtrl', ['$scope', '$http', 'punishmentService',
+        function ($scope, $http, punishmentService) {
+            $scope.name = '';
+            $scope.description = '';
+            $scope.error = false;
+            $scope.success = false;
+            $scope.lastPunishment = {};
 
-        $scope.isValid = function () {
-            return $scope.name.length > 0 && $scope.description.length > 0;
-        };
+            /**
+             * Determines if the form is valid or not and the punishment can be created
+             * @returns {boolean} If is valid
+             */
+            $scope.isValid = function () {
+                return $scope.name.length > 0 && $scope.description.length > 0;
+            };
 
-        $scope.doAction = function () {
-            $http.post('/punishment/create', {
-                title: $scope.name,
-                description: $scope.description
-            }).then(function (response) {
-                $scope.error = false;
-                $scope.success = true;
-                $scope.name = '';
-                $scope.description = '';
-                $scope.lastPunishment = response.data;
-            }, function () {
-                $scope.error = true;
-                $scope.success = false;
-            });
-        };
-    }]);
+            /**
+             * Performs the action and creates the punishment on the server
+             */
+            $scope.doAction = function () {
+                punishmentService.create($scope.name, $scope.description)
+                    .then(function (data) {
+                        $scope.error = false;
+                        $scope.success = true;
+                        $scope.name = '';
+                        $scope.description = '';
+                        $scope.lastPunishment = data;
+                    }, function () {
+                        $scope.error = true;
+                        $scope.success = false;
+                    });
+            };
+        }
+    ]);
 
 }(window.punisher));

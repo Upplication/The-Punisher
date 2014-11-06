@@ -10,17 +10,9 @@ describe("app_spec.js: App", function () {
             ctrl: 'AdminCtrl',
             tpl: 'admin-ctrl'
         }, {
-            route: '/punishment/new',
-            ctrl: 'NewPunishmentCtrl',
-            tpl: 'punishment-detail-ctrl'
-        }, {
-            route: '/punishment/:id/edit',
-            ctrl: 'EditPunishmentCtrl',
-            tpl: 'punishment-detail-ctrl'
-        }, {
             route: '/',
-            ctrl: 'PunishmentsCtrl',
-            tpl: 'punishments-ctrl'
+            ctrl: 'RouletteCtrl',
+            tpl: 'roulette-ctrl'
         }];
 
         inject(function ($route) {

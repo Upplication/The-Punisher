@@ -1,7 +1,7 @@
 'use strict';
 
-describe('new-punishment-ctrl_spec.js: New punishment', function () {
-    var $scope, $httpBackend, $timeout;
+describe('new-punishment-ctrl_spec.js: New punishment - ', function () {
+    var $scope, $httpBackend;
 
     var isValid = function (valid) {
         expect($scope.isValid()).toBe(valid);
@@ -32,7 +32,6 @@ describe('new-punishment-ctrl_spec.js: New punishment', function () {
         $scope = $rootScope.$new();
         $controller('NewPunishmentCtrl', {$scope: $scope});
         $httpBackend = $injector.get('$httpBackend');
-        $timeout = $injector.get('$timeout');
     }));
 
     it('should have name and description empty', function () {
