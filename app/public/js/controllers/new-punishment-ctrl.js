@@ -1,8 +1,8 @@
 (function (app) {
     'use strict';
 
-    app.controller('NewPunishmentCtrl', ['$scope', '$http', 'punishmentService',
-        function ($scope, $http, punishmentService) {
+    app.controller('NewPunishmentCtrl', ['$rootScope', '$scope', '$http', 'punishmentService',
+        function ($rootScope, $scope, $http, punishmentService) {
             $scope.name = '';
             $scope.description = '';
             $scope.error = false;
@@ -28,6 +28,8 @@
                         $scope.name = '';
                         $scope.description = '';
                         $scope.lastPunishment = data;
+
+                        $rootScope.$broadcast('punishment-added', data);
                     }, function () {
                         $scope.error = true;
                         $scope.success = false;
