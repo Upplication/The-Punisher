@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -76,7 +77,22 @@ class PunishmentController {
     @RequestMapping(value = "roulette-punishments")
     public String roulettePunishment(Map<String, Object> model) {
 
-        model.put("punishments", punishmentRepository.list());
+        List<PunishmentRoulette> result = new ArrayList<>();
+
+        for (Punishment punish : punishmentRepository.list()){
+            PunishmentRoulette roulette = new PunishmentRoulette();
+            roulette.setTitle(punish.getTitle());
+            roulette.setDescription(punish.getDescription());
+            String titleRoulette = "";
+            for (char titleChar : punish.getTitle().toCharArray()){
+                titleRoulette += titleChar + "\n";
+            }
+            roulette.setTitleRoulette(titleRoulette);
+
+            result.add(roulette);
+        }
+
+        model.put("punishments", result);
 
         return "thepunisher/roulette";
     }

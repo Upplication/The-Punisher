@@ -2,14 +2,320 @@
 <html>
     <head>
         <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width"/>
+        <script src="//d3lp1msu2r81bx.cloudfront.net/kjs/js/lib/kinetic-v5.0.1.js"></script>
         <script src="//code.jquery.com/jquery-2.1.0.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/mustache.js/0.8.1/mustache.min.js"></script>
+        <!--/* this javascript cant be parsed with HtmlUnit */-->
+        <script type="text/javascript" th:inline="javascript" th:unless="${#lists.isEmpty(punishments)}">
+        /*<![CDATA[*/
+            $(document).ready(function() {
+                //constants
+                var ELEMENTS = /*[[${punishments.![titleRoulette]}]]*/ ['h\no\nl\na', 'a\nd\ni\no\ns','b\ne\nt\ni\ns','m\na\nd\nr\ni\nd','c\nu\nr\nr\no','m\no\nj\no\nn','s\na\nl\nu\nd','d\ni\nn\ne\nr\no', 'a\ns\nd\na\ns\nd', 'g\ns\nd\nf\nd\ns\nf\ns', 'a\ns\nd\na\ns\nd\na\ns\nd\na', 'e\ny\n!', 'a\ns\nd\na\ns\nd\na\ns', 'n\nv\nb\nn\nb\nv\nn\nb\nv\nn', 'a\ns\nd\na\ns\nd\na', 'p\np\np\np\np', 'd\nd\nd\nd\nd\nd\nd', '0\n0\n0\n0\n0\n0\n0\n0', 'p\no\np\no\np\no\np\no\np\no\np', 'q\ne\nw\nq\nw\ne\nq\nw\ne\nq\nw\ne\nq\nw', '1\n2\n3','2\n3\n5','3\n85\n13','4','5'];
+                var ALL_DATA = /*[[${punishments}]]*/ [{'title':'hola','description':'desc'}];
+
+                var MAX_ANGULAR_VELOCITY = 500;
+                var NUM_WEDGES = ELEMENTS.length;
+                var WHEEL_RADIUS = 410;
+                var ANGULAR_FRICTION = 0.2;
+
+                // globals
+                var angularVelocity = 0;
+                var lastRotation = 0;
+                var controlled = false;
+                var target, activeWedge, stage, layer, wheel,
+                        pointer, pointerTween, startRotation, startX, startY;
+
+                var anim = {
+                };
+
+
+                function purifyColor(color) {
+                    var randIndex = Math.round(Math.random() * 3);
+                    color[randIndex] = 0;
+                    return color;
+                }
+                function getRandomColor() {
+                    var r = 100 + Math.round(Math.random() * 55);
+                    var g = 100 + Math.round(Math.random() * 55);
+                    var b = 100 + Math.round(Math.random() * 55);
+                    var color = [r, g, b];
+                    color = purifyColor(color);
+                    color = purifyColor(color);
+
+                    return color;
+                }
+                function bind() {
+
+                    var startAction = function(evt) {
+                        if (anim.isRunning()){
+                            alert("wait motherfuckerrr");
+                            console.log("still running!");
+                        }
+                        else {
+                            anim.start();
+                            console.log("startt");
+
+                            var mousePos = stage.getPointerPosition();
+                            angularVelocity = 0;
+                            controlled = true;
+                            target = evt.targetNode;
+                            startRotation = this.rotation();
+                            startX = mousePos.x;
+                            startY = mousePos.y;
+                        }
+                    };
+
+                    var endAction = function() {
+                        console.log("mouseup");
+                        anim.start();
+                        controlled = false;
+                        if(angularVelocity > MAX_ANGULAR_VELOCITY) {
+                            angularVelocity = MAX_ANGULAR_VELOCITY;
+                        }
+                        else if(angularVelocity < (-1 * MAX_ANGULAR_VELOCITY)) {
+                            angularVelocity = -1 * MAX_ANGULAR_VELOCITY;
+                        }
+
+                        angularVelocities = [];
+
+                    };
+
+                    var mouveAction = function(evt) {
+                        var mousePos = stage.getPointerPosition();
+                        if(controlled && mousePos && target) {
+                            var x1 = mousePos.x - wheel.x();
+                            var y1 = mousePos.y - wheel.y();
+                            var x2 = startX - wheel.x();
+                            var y2 = startY - wheel.y();
+                            var angle1 = Math.atan(y1 / x1) * 180 / Math.PI;
+                            var angle2 = Math.atan(y2 / x2) * 180 / Math.PI;
+                            var angleDiff = angle2 - angle1;
+
+                            if ((x1 < 0 && x2 >=0) || (x2 < 0 && x1 >=0)) {
+                                angleDiff += 180;
+                            }
+
+                            wheel.setRotation(startRotation - angleDiff);
+                        }
+                    };
+
+                    // set events:
+
+                    wheel.on('touchstart', startAction);
+                    wheel.on('mousedown', startAction);
+                    // add listeners to container
+                    document.body.addEventListener('touchend', endAction, false);
+                    document.body.addEventListener('mouseup', endAction, false);
+
+                    document.body.addEventListener('touchmove', mouveAction, false);
+                    document.body.addEventListener('mousemove', mouveAction, false);
+                }
+                function getRandomReward() {
+                    var mainDigit = Math.round(Math.random() * 9);
+                    return mainDigit + '\n0\n0';
+                }
+                function addWedge(n, textInside) {
+                    var s = getRandomColor();
+                    var reward = getRandomReward();
+                    var r = s[0];
+                    var g = s[1];
+                    var b = s[2];
+                    var angle = 360 / NUM_WEDGES;
+
+                    var endColor = 'rgb(' + r + ',' + g + ',' + b + ')';
+                    r += 100;
+                    g += 100;
+                    b += 100;
+
+                    var startColor = 'rgb(' + r + ',' + g + ',' + b + ')';
+
+                    var wedge = new Kinetic.Group({
+                        rotation: n * 360 / NUM_WEDGES
+                    });
+
+                    var wedgeBackground = new Kinetic.Wedge({
+                        radius: WHEEL_RADIUS,
+                        angle: angle,
+                        fillRadialGradientStartRadius: 0,
+                        fillRadialGradientEndRadius: WHEEL_RADIUS,
+                        fillRadialGradientColorStops: [0, startColor, 1, endColor],
+                        fill: '#64e9f8',
+                        fillPriority: 'radial-gradient',
+                        stroke: '#ccc',
+                        strokeWidth: 2,
+                        rotation: (90 + angle/2) * -1
+                    });
+
+                    wedge.add(wedgeBackground);
+
+                    var text = new Kinetic.Text({
+                        text: textInside,
+                        fontFamily: 'Calibri',
+                        fontSize: 20,
+                        fill: 'white',
+                        align: 'center',
+                        stroke: 'yellow',
+                        strokeWidth: 1,
+                        listening: false
+
+                    });
+
+                    text.offsetX(text.width()/2);
+                    text.offsetY(WHEEL_RADIUS - 15);
+
+                    wedge.add(text);
+
+                    wheel.add(wedge);
+                }
+
+                var activeWedge;
+
+                function animate(frame) {
+                    // wheel
+                    var angularVelocityChange = angularVelocity * frame.timeDiff * (1 - ANGULAR_FRICTION) / 1000;
+                    angularVelocity -= angularVelocityChange;
+
+                    if(controlled) {
+                        angularVelocity = ((wheel.getRotation() - lastRotation) * 1000 / frame.timeDiff);
+                    }
+                    else {
+                        wheel.rotate(frame.timeDiff * angularVelocity / 1000);
+                    }
+
+                    lastRotation = wheel.getRotation();
+                    // pointer
+                    var intersectedWedge = layer.getIntersection({x: stage.width()/2, y: 50});
+                    // el momento en el que pasa por tope
+                    if (intersectedWedge && (!activeWedge || activeWedge._id !== intersectedWedge._id)) {
+                        pointerTween.reset();
+                        pointerTween.play();
+                        activeWedge = intersectedWedge;
+
+                        console.log("pasamos por el vertice!!");
+                    }
+
+                    setTimeout(function() {
+                        if (anim.isRunning() && angularVelocity < 0.35 && angularVelocity > -0.35 && !controlled) {
+
+                            var template = $('#result-tmpl').html();
+
+                            var titlePunish = activeWedge.parent.children[1].text().replace(/\n/g,"");
+                            var descPunish = "";
+
+                            for (i = 0; i < ALL_DATA.length; i++) {
+                                if (ALL_DATA[i].title === titlePunish) {
+                                    descPunish = ALL_DATA[i].description;
+                                    break;
+                                }
+                            }
+
+                            var rendered = Mustache.render(template,
+                                    {
+                                        title: titlePunish,
+                                        description: descPunish
+                                    }
+                            );
+
+                            $("body").append(rendered);
+
+                            console.log(activeWedge.parent.children[1].text());
+                            anim.stop();
+                        }
+                    }, 10);
+                }
+
+                function init(elemnts) {
+                    stage = new Kinetic.Stage({
+                        container: 'roulette',
+                        width: 578,
+                        height: 200
+                    });
+
+                    layer = new Kinetic.Layer();
+                    wheel = new Kinetic.Group({
+                        x: stage.getWidth() / 2,
+                        y: WHEEL_RADIUS + 20
+                    });
+
+                    for(var n = 0; n < elemnts.length; n++) {
+                        addWedge(n, elemnts[n]);
+                    }
+
+                    pointer = new Kinetic.Wedge({
+                        fillRadialGradientStartPoint: 0,
+                        fillRadialGradientStartRadius: 0,
+                        fillRadialGradientEndPoint: 0,
+                        fillRadialGradientEndRadius: 30,
+                        fillRadialGradientColorStops: [0, 'white', 1, 'red'],
+                        stroke: 'white',
+                        strokeWidth: 2,
+                        lineJoin: 'round',
+                        angle: 30,
+                        radius: 30,
+                        x: stage.getWidth() / 2,
+                        y: 20,
+                        rotation: -105,
+                        shadowColor: 'black',
+                        shadowOffset: {x:3,y:3},
+                        shadowBlur: 2,
+                        shadowOpacity: 0.5
+                    });
+
+                    // add components to the stage
+                    layer.add(wheel);
+                    layer.add(pointer);
+                    stage.add(layer);
+
+                    pointerTween = new Kinetic.Tween({
+                        node: pointer,
+                        duration: 0.1,
+                        easing: Kinetic.Easings.EaseInOut,
+                        y: 30,
+                        onFinish: function() {
+                        }
+                    });
+
+                    pointerTween.finish();
+
+                    var radiusPlus2 = WHEEL_RADIUS + 2;
+
+                    wheel.cache({
+                        x: -1* radiusPlus2,
+                        y: -1* radiusPlus2,
+                        width: radiusPlus2 * 2,
+                        height: radiusPlus2 * 2
+                    }).offset({
+                                x: radiusPlus2,
+                                y: radiusPlus2
+                            });
+
+                    layer.draw();
+
+                    // bind events
+                    bind();
+
+                    anim = new Kinetic.Animation(animate, layer);
+                };
+
+                init(ELEMENTS);
+            });
+        /*]]>*/
+        </script>
     </head>
     <body>
         <div th:unless="${#lists.isEmpty(punishments)}" id="roulette">
-            <span  th:each="punsish : ${punishments}" class="punish" th:text="${punsish.title}"></span>
+            <canvas></canvas>
         </div>
-        <div th:if="${#lists.isEmpty(punishments)}" id="roulette">
-            <a href="@{/create-punishment}">Create Punishment</a>
+        <div id="navigation">
+            <a th:href="@{/create-punishment}" href="/create-punishment">Create Punishment</a>
         </div>
+
+        <script id="result-tmpl" type="x-tmpl-mustache">
+            <div id="result">
+                <span class="title">{{title}}</span>
+                <span class="description">{{description}}</span>
+            </div>
+        </script>
     </body>
 </html>

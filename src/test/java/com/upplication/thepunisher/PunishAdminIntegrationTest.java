@@ -360,6 +360,13 @@ public class PunishAdminIntegrationTest {
     }
 
     @Test
+    public void get_create_punishment_return_link_to_roulette() throws Exception {
+        mockMvc.perform(get("/create-punishment"))
+                .andExpect(status().isOk())
+                .andExpect(xpath("//div[@id=\"navigation\"]/a").exists());
+    }
+
+    @Test
     public void create_punishment_add_first_to_the_list_of_punishments() throws IOException {
         // TODO: htmlunit claro que si
         // http://spring.io/blog/2014/03/25/spring-mvc-test-with-htmlunit

@@ -5,7 +5,7 @@
         <script src="//code.jquery.com/jquery-2.1.0.min.js"></script>
         <script src="//cdnjs.cloudflare.com/ajax/libs/mustache.js/0.8.1/mustache.min.js"></script>
 
-        <script type="text/javascript">
+        <script type="text/javascript" >
             console.log("loading custom library");
             //callback handler for form submit
             $( document ).ready(function() {
@@ -181,6 +181,9 @@
         </script>
     </head>
     <body>
+        <div id="navigation">
+            <a th:href="@{/roulette-punishments}" href="/roulette-punishments">Roulette</a>
+        </div>
         <form id="save-punishment-form" action="save-punishment" method="POST">
             <span id="error" style="display: none">All fields are mandatory and title should be unique</span>
             <input type="text" name="title"/>
