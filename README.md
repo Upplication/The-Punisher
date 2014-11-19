@@ -42,13 +42,15 @@ Usuario: usuario que utiliza la aplicación ya configurada
  - [x] Como Administrador quiero editar el nombre de un castigo y que se quede guardado en el listado
  - [x] Como Administrador quiero editar la descripción de un castigo y que se quede guardado en el listado
  - [x] Como Administrador si edito el nombre de un castigo y ya existe el nuevo, el sistema avisa con un mensaje.
-    
-- [ ] Como Usuario quiero ver la ruleta con los castigos para girarla
- - [ ] Como Usuario quiero ver un botón de añadir castigo si no hay castigos en la ruleta.
- - [ ] Como Usuario quiero ver los castigos en la ruleta si hay castigos.
+- [x] Como Administrador quiero ver un enlace a la roulette.
+- [x] Como Usuario quiero ver la ruleta con los castigos para girarla
+ - [x] Como Usuario quiero ver un botón de añadir castigo
+ - [x] Como Usuario quiero ver los castigos en la ruleta si hay castigos.
 - [ ] Como Usuario quiero girar a la ruleta y que se pare en un castigo para ser castigado
- - [ ] Como usuario quiero un modo para hacer girar la ruleta y que de forma automática determine un castigo.
- - [ ] Como usuario quiero un indicador para saber que castigo he recibido.
+ - [x] Como Usuario quiero un modo para hacer girar la ruleta y que de forma automática determine un castigo.
+ - [x] Como Usuario quiero un indicador para saber que castigo he recibido.
+ - [x] Como Usuario quiero un indicador para saber que castigo he recibido y que muestre la descripción del castigo
+ - [ ] Como Usuario quiero volver a tirar.
 
 ## ATDD técnico
 
