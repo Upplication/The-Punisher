@@ -1,9 +1,16 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
         <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
         <script src="//code.jquery.com/jquery-2.1.0.min.js"></script>
         <script src="//cdnjs.cloudflare.com/ajax/libs/mustache.js/0.8.1/mustache.min.js"></script>
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css"/>
+        <!-- Optional theme -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css"/>
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
 
         <script type="text/javascript" >
             console.log("loading custom library");
@@ -46,8 +53,8 @@
                         // view: http://stackoverflow.com/questions/11338774/serialize-form-data-to-json
                         var formData = {
                             'id' 			    :  $editSpan.attr('data-id'),
-                            'title' 			:  $editSpan.parent().find('input[name=title]').val(),
-                            'description' 		:  $editSpan.parent().find('input[name=description]').val()
+                            'title' 			:  $editSpan.parent().parent().find('input[name=title]').val(),
+                            'description' 		:  $editSpan.parent().parent().find('input[name=description]').val()
                         };
 
                         $.ajax({
@@ -66,13 +73,13 @@
                                             id: formData.id
                                         }
                                 );
-                                $divContainer = $editSpan.parent();
+                                $divContainer = $editSpan.parent().parent();
                                 $(rendered).insertBefore($divContainer);
                                 $divContainer.remove();
                             },
                             error: function(jqXHR, textStatus, errorThrown)
                             {
-                                $editSpan.parent().find('.error').show();
+                                $editSpan.parent().parent().find('.error').show();
                                 console.log("error to submit");
                                 console.log(jqXHR);
                                 console.log(textStatus);
@@ -83,8 +90,8 @@
 
                     }
                     else {
-                        var $titleSpan = $editSpan.parent().find(".title");
-                        var $descriptionSpan = $editSpan.parent().find(".description");
+                        var $titleSpan = $editSpan.parent().parent().find(".title");
+                        var $descriptionSpan = $editSpan.parent().parent().find(".description");
 
                         var inputTitle = $('<input />', {
                             'type': 'text',
@@ -181,28 +188,48 @@
         </script>
     </head>
     <body>
-        <div id="navigation">
-            <a th:href="@{/roulette-punishments}" href="/roulette-punishments">Roulette</a>
-        </div>
-        <form id="save-punishment-form" action="save-punishment" method="POST">
-            <span id="error" style="display: none">All fields are mandatory and title should be unique</span>
-            <input type="text" name="title"/>
-            <input type="text" name="description"/>
-            <input type="submit"/>
-        </form>
+        <div th:replace="thepunisher/fragments/header :: header">&nbsp;</div>
+        <div class="container">
+            <div class="row">
+                <p id="error" style="display: none" class="bg-danger">All fields are mandatory and title should be unique</p>
+                <form role="form" id="save-punishment-form" action="save-punishment" method="POST">
+                    <div class="form-group">
+                        <label for="title-input">Title</label>
+                        <input type="text" name="title" class="form-control" id="title-input"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="description-input">Description</label>
+                        <input type="text" name="description" class="form-control" id="description-input"/>
+                    </div>
+                    <button type="submit" class="btn btn-default">Submit</button>
+                </form>
 
-        <div id="list-punishments">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Description</th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="list-punishments">
 
+                    </tbody>
+
+                </table>
+            </div>
         </div>
 
         <script id="punishment-element" type="x-tmpl-mustache">
-            <div>
-                <span class="title">{{title}}</span>
-                <span class="description">{{description}}</span>
-                <span class="delete" data-id="{{id}}">Delete</span>
-                <span class="edit" data-id="{{id}}">Edit</span>
-                <span class="error" style="display: none">Title repeated</span>
-            </div>
+            <tr>
+                <td> <span class="title">{{title}}</span></td>
+                <td><span class="description">{{description}}</span></td>
+                <td> <button type="submit" class="btn btn-default edit" data-id="{{id}}">Edit</button></td>
+                <td class="delete" data-id="{{id}}"><button type="submit" class="btn btn-danger">Delete</button></td>
+                <td class="error" style="display: none">Title repeated</td>
+            </tr>
         </script>
     </body>
 </html>

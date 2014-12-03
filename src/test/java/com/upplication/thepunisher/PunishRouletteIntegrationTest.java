@@ -54,7 +54,10 @@ public class PunishRouletteIntegrationTest {
         webClient.addRequestHeader("Accept-Language", "es-ES");
         // new MockMvcHtmlUnitDriver(mockMvc, true)
 
-        UrlRegexRequestMatcher cdnMatcher = new UrlRegexRequestMatcher("(.*?//code.jquery.com/.*)|(.*?//d3lp1msu2r81bx.cloudfront.net/.*)|(.*?//cdnjs.cloudflare.com/ajax/libs/mustache.js/.*)");
+        UrlRegexRequestMatcher cdnMatcher = new UrlRegexRequestMatcher("(.*?//code.jquery.com/.*)|" +
+                "(.*?//d3lp1msu2r81bx.cloudfront.net/.*)|" +
+                "(.*?//cdnjs.cloudflare.com/ajax/libs/mustache.js/.*)|" +
+                "(.*?//maxcdn.bootstrapcdn.com/.*)");
         WebConnection httpConnection = new HttpWebConnection(webClient);
         WebConnection webConnection = new DelegatingWebConnection(new MockMvcWebConnection(mockMvc), new DelegatingWebConnection.DelegateWebConnection(cdnMatcher, httpConnection));
         webClient.setWebConnection(webConnection);
@@ -79,13 +82,13 @@ public class PunishRouletteIntegrationTest {
     public void list_roulette_without_punishment_then_show_button_go_to_admin_page() throws Exception {
         mockMvc.perform(get("/roulette-punishments"))
                 .andExpect(status().isOk())
-                .andExpect(xpath("//div[@id=\"navigation\"]").exists())
-                .andExpect(xpath("//div[@id=\"navigation\"]/a").exists())
-                .andExpect(xpath("//div[@id=\"roulette\"]").doesNotExist());
+                .andExpect(xpath("//nav[@id=\"navigation\"]").exists())
+                .andExpect(xpath("//nav[@id=\"navigation\"]/ul/li/a").exists())
+                .andExpect(xpath("//nav[@id=\"roulette\"]").doesNotExist());
     }
 
     @Test
-    public void list_roulette_then_you_get_punishmemtns_in_vertical() throws Exception {
+    public void list_roulette_then_you_get_punishmemnts_in_vertical() throws Exception {
         // insert to the list
         punishmentRepository.create("abc", "desc2");
         punishmentRepository.create("def", "desc2");
@@ -96,6 +99,29 @@ public class PunishRouletteIntegrationTest {
                 webClient.getPage("http://localhost/the-punisher/roulette-punishments");
 
         assertThat(page.getHead().asXml(), containsString("ELEMENTS = ['a\\nb\\nc\\n','d\\ne\\nf\\n']"));
+    }
+
+    @Test
+    public void delete_punishment_then_you_not_get_the_deleted_punishmemnt_in_vertical() throws Exception {
+        // insert to the list
+        Punishment punishment = punishmentRepository.create("a", "d");
+        punishmentRepository.create("def", "desc2");
+
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
+
+        HtmlPage page =
+                webClient.getPage("http://localhost/the-punisher/roulette-punishments");
+
+        assertThat(page.getHead().asXml(), containsString("ELEMENTS = ['a\\n','d\\ne\\nf\\n']"));
+
+        punishmentRepository.delete(punishment.getId());
+
+        // reload
+
+        HtmlPage pageReload =
+                webClient.getPage("http://localhost/the-punisher/roulette-punishments");
+
+        assertThat(pageReload.getHead().asXml(), containsString("ELEMENTS = ['d\\ne\\nf\\n']"));
     }
 
     @Test
@@ -123,7 +149,7 @@ public class PunishRouletteIntegrationTest {
         assertThat(page.getHead().asXml(), not(containsString("var ELEMENTS")));
     }
 
-    //@Test
+    //@Test // FIXME: not work the spinner with htmlunit :(
     public void list_roulette_then_you_can_spin_and_get_the_selected() throws Exception {
         // insert to the list
         punishmentRepository.create("abc", "desc2");
@@ -135,6 +161,7 @@ public class PunishRouletteIntegrationTest {
                 webClient.getPage("http://localhost/the-punisher/roulette-punishments");
 
         HtmlElement div = page.getHtmlElementById("roulette");
+        //div.click();
         div.mouseDown();
         div.mouseMove();
         div.mouseUp();

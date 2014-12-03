@@ -58,7 +58,9 @@ public class PunishAdminIntegrationTest {
         webClient.addRequestHeader("Accept-Language" , "es-ES");
        // new MockMvcHtmlUnitDriver(mockMvc, true)
 
-        UrlRegexRequestMatcher cdnMatcher = new UrlRegexRequestMatcher("(.*?//code.jquery.com/.*)|(.*?//cdnjs.cloudflare.com/.*)");
+        UrlRegexRequestMatcher cdnMatcher = new UrlRegexRequestMatcher("(.*?//code.jquery.com/.*)|" +
+                "(.*?//cdnjs.cloudflare.com/.*)|" +
+                "(.*?//maxcdn.bootstrapcdn.com/.*)");
         WebConnection httpConnection = new HttpWebConnection(webClient);
         WebConnection webConnection = new DelegatingWebConnection(new MockMvcWebConnection(mockMvc), new DelegatingWebConnection.DelegateWebConnection(cdnMatcher, httpConnection));
         webClient.setWebConnection(webConnection);
@@ -269,7 +271,7 @@ public class PunishAdminIntegrationTest {
         mockMvc.perform(get("/create-punishment"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("<!DOCTYPE html>")))
-                .andExpect(content().string(containsString("<html>")))
+                .andExpect(content().string(containsString("<html lang=\"en\">")))
                 .andExpect(content().string(containsString("<body>")))
                 .andExpect(content().string(containsString("</body>")))
                 .andExpect(content().string(containsString("</html>")));
@@ -356,14 +358,14 @@ public class PunishAdminIntegrationTest {
     public void get_create_punishment_return_the_previous_created_punishment_by_ajax() throws Exception {
         mockMvc.perform(get("/create-punishment"))
                 .andExpect(status().isOk())
-                .andExpect(xpath("//div[@id=\"list-punishments\"]").exists());
+                .andExpect(xpath("//tbody[@id=\"list-punishments\"]/tr").exists());
     }
 
     @Test
     public void get_create_punishment_return_link_to_roulette() throws Exception {
         mockMvc.perform(get("/create-punishment"))
                 .andExpect(status().isOk())
-                .andExpect(xpath("//div[@id=\"navigation\"]/a").exists());
+                .andExpect(xpath("//nav[@id=\"navigation\"]/ul/li/a").exists());
     }
 
     @Test
@@ -470,13 +472,13 @@ public class PunishAdminIntegrationTest {
         HtmlPage page =
                 webClient.getPage("http://localhost/the-punisher/create-punishment");
 
-        HtmlDivision div = page.getHtmlElementById("list-punishments");
-        List<HtmlSpan> spanDelete = (List<HtmlSpan>)div.getByXPath("div/span[@class=\"delete\"]");
+        HtmlTableBody tbody = page.getHtmlElementById("list-punishments");
+        List<HtmlTableDataCell> cellDelete = (List<HtmlTableDataCell>)tbody.getByXPath("tr/td[@class=\"delete\"]");
 
-        assertEquals(2, div.getHtmlElementsByTagName("div").size());
-        assertEquals(2, spanDelete.size());
-        assertEquals(punishA.getId() + "", spanDelete.get(0).getAttribute("data-id"));
-        assertEquals(punishB.getId() + "", spanDelete.get(1).getAttribute("data-id"));
+        assertEquals(2, tbody.getHtmlElementsByTagName("tr").size());
+        assertEquals(2, cellDelete.size());
+        assertEquals(punishA.getId() + "", cellDelete.get(0).getAttribute("data-id"));
+        assertEquals(punishB.getId() + "", cellDelete.get(1).getAttribute("data-id"));
     }
 
     @Test
@@ -488,13 +490,13 @@ public class PunishAdminIntegrationTest {
         HtmlPage page =
                 webClient.getPage("http://localhost/the-punisher/create-punishment");
 
-        HtmlDivision div = page.getHtmlElementById("list-punishments");
-        List<HtmlSpan> spanDelete = (List<HtmlSpan>)div.getByXPath("div/span[@class=\"delete\"]");
+        HtmlTableBody tbody = page.getHtmlElementById("list-punishments");
+        List<HtmlTableDataCell> cellDelete = (List<HtmlTableDataCell>)tbody.getByXPath("tr/td[@class=\"delete\"]");
 
-        assertEquals(2, div.getHtmlElementsByTagName("div").size());
-        assertEquals(2, spanDelete.size());
-        assertEquals("Delete", spanDelete.get(0).getTextContent());
-        assertEquals("Delete", spanDelete.get(1).getTextContent());
+        assertEquals(2, tbody.getHtmlElementsByTagName("tr").size());
+        assertEquals(2, cellDelete.size());
+        assertEquals("Delete", ((HtmlButton)cellDelete.get(0).getByXPath("button").get(0)).getTextContent());
+        assertEquals("Delete",  ((HtmlButton) cellDelete.get(1).getByXPath("button").get(0)).getTextContent());
     }
 
     @Test
@@ -504,12 +506,12 @@ public class PunishAdminIntegrationTest {
 
         submitPunishment(page, "hola", "desc");
 
-        HtmlDivision div = page.getHtmlElementById("list-punishments");
-        List<HtmlSpan> spanDelete = (List<HtmlSpan>)div.getByXPath("div/span[@class=\"delete\"]");
+        HtmlTableBody tbody = page.getHtmlElementById("list-punishments");
+        List<HtmlTableDataCell> tdDelete = (List<HtmlTableDataCell>)tbody.getByXPath("tr/td[@class=\"delete\"]");
 
-        assertEquals(1, div.getHtmlElementsByTagName("div").size());
-        assertEquals(1, spanDelete.size());
-        assertNotNull(spanDelete.get(0).getAttribute("data-id"));
+        assertEquals(1, tbody.getHtmlElementsByTagName("tr").size());
+        assertEquals(1, tdDelete.size());
+        assertNotNull(tdDelete.get(0).getAttribute("data-id"));
     }
 
 
@@ -520,12 +522,12 @@ public class PunishAdminIntegrationTest {
 
         HtmlPage page =
                 webClient.getPage("http://localhost/the-punisher/create-punishment");
-        HtmlDivision div = page.getHtmlElementById("list-punishments");
-        List<HtmlSpan> spanDelete = (List<HtmlSpan>)div.getByXPath("div/span[@class=\"delete\"]");
+        HtmlTableBody tbody = page.getHtmlElementById("list-punishments");
+        List<HtmlButton> buttonDelete = (List<HtmlButton>)tbody.getByXPath("tr/td[@class=\"delete\"]/button");
 
-        spanDelete.get(0).click();
+        buttonDelete.get(0).click();
 
-        assertEquals(0, div.getHtmlElementsByTagName("div").size());
+        assertEquals(0, tbody.getHtmlElementsByTagName("tr").size());
     }
 
     @Test
@@ -786,12 +788,12 @@ public class PunishAdminIntegrationTest {
         titleInput.setValueAttribute(title);
         HtmlTextInput descriptionInput = getDescription(page);
         descriptionInput.setText(description);
-        HtmlSubmitInput submit = getSubmit(page);
+        HtmlButton submit = getSubmit(page);
         submit.click();
     }
 
-    private HtmlSubmitInput getSubmit(HtmlPage page) {
-        return page.getHtmlElementById("save-punishment-form").getOneHtmlElementByAttribute("input", "type", "submit");
+    private HtmlButton getSubmit(HtmlPage page) {
+        return page.getHtmlElementById("save-punishment-form").getOneHtmlElementByAttribute("button", "type", "submit");
     }
 
     private HtmlTextInput getTitle(HtmlPage page) {

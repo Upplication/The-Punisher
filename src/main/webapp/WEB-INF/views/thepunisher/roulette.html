@@ -1,16 +1,23 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
         <meta charset="UTF-8"/>
-        <meta name="viewport" content="width=device-width"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no"/>
         <script src="//d3lp1msu2r81bx.cloudfront.net/kjs/js/lib/kinetic-v5.0.1.js"></script>
         <script src="//code.jquery.com/jquery-2.1.0.min.js"></script>
         <script src="//cdnjs.cloudflare.com/ajax/libs/mustache.js/0.8.1/mustache.min.js"></script>
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css"/>
+        <!-- Optional theme -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css"/>
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
         <!--/* this javascript cant be parsed with HtmlUnit */-->
         <script type="text/javascript" th:inline="javascript" th:unless="${#lists.isEmpty(punishments)}">
         /*<![CDATA[*/
             $(document).ready(function() {
-                //constants
+                // constants
+                // FIXME: use namespace
                 var ELEMENTS = /*[[${punishments.![titleRoulette]}]]*/ ['h\no\nl\na', 'a\nd\ni\no\ns','b\ne\nt\ni\ns','m\na\nd\nr\ni\nd','c\nu\nr\nr\no','m\no\nj\no\nn','s\na\nl\nu\nd','d\ni\nn\ne\nr\no', 'a\ns\nd\na\ns\nd', 'g\ns\nd\nf\nd\ns\nf\ns', 'a\ns\nd\na\ns\nd\na\ns\nd\na', 'e\ny\n!', 'a\ns\nd\na\ns\nd\na\ns', 'n\nv\nb\nn\nb\nv\nn\nb\nv\nn', 'a\ns\nd\na\ns\nd\na', 'p\np\np\np\np', 'd\nd\nd\nd\nd\nd\nd', '0\n0\n0\n0\n0\n0\n0\n0', 'p\no\np\no\np\no\np\no\np\no\np', 'q\ne\nw\nq\nw\ne\nq\nw\ne\nq\nw\ne\nq\nw', '1\n2\n3','2\n3\n5','3\n85\n13','4','5'];
                 var ALL_DATA = /*[[${punishments}]]*/ [{'title':'hola','description':'desc'}];
 
@@ -18,6 +25,9 @@
                 var NUM_WEDGES = ELEMENTS.length;
                 var WHEEL_RADIUS = 410;
                 var ANGULAR_FRICTION = 0.2;
+
+                var ROULETTE_WIDTH =  $(window).width() - 50;
+                var ROULETTE_HEIGHT = $(window).height() - $('header').height();
 
                 // globals
                 var angularVelocity = 0;
@@ -49,7 +59,7 @@
 
                     var startAction = function(evt) {
                         if (anim.isRunning()){
-                            alert("wait motherfuckerrr");
+                            //alert("wait motherfuckerrr");
                             console.log("still running!");
                         }
                         else {
@@ -68,17 +78,22 @@
 
                     var endAction = function() {
                         console.log("mouseup");
-                        anim.start();
-                        controlled = false;
-                        if(angularVelocity > MAX_ANGULAR_VELOCITY) {
-                            angularVelocity = MAX_ANGULAR_VELOCITY;
-                        }
-                        else if(angularVelocity < (-1 * MAX_ANGULAR_VELOCITY)) {
-                            angularVelocity = -1 * MAX_ANGULAR_VELOCITY;
-                        }
+                        console.log(angularVelocity);
 
-                        angularVelocities = [];
-
+                       if (angularVelocity < -0.5 || angularVelocity > 0.5) {
+                            anim.start();
+                            controlled = false;
+                            if(angularVelocity > MAX_ANGULAR_VELOCITY) {
+                                angularVelocity = MAX_ANGULAR_VELOCITY;
+                            }
+                            else if(angularVelocity < (-1 * MAX_ANGULAR_VELOCITY)) {
+                                angularVelocity = -1 * MAX_ANGULAR_VELOCITY;
+                            }
+                            angularVelocities = [];
+                       }
+                        else{
+                            anim.stop();
+                        }
                     };
 
                     var mouveAction = function(evt) {
@@ -196,8 +211,8 @@
                     }
 
                     setTimeout(function() {
-                        if (anim.isRunning() && angularVelocity < 0.35 && angularVelocity > -0.35 && !controlled) {
-
+                        if (anim.isRunning() && angularVelocity < 0.35 && angularVelocity > -0.35 && !controlled){
+                            looping = false;
                             var template = $('#result-tmpl').html();
 
                             var titlePunish = activeWedge.parent.children[1].text().replace(/\n/g,"");
@@ -217,10 +232,13 @@
                                     }
                             );
 
-                            $("body").append(rendered);
+                            $("#result").html(rendered);
 
                             console.log(activeWedge.parent.children[1].text());
                             anim.stop();
+
+                            $('#result').modal('show');
+
                         }
                     }, 10);
                 }
@@ -228,8 +246,8 @@
                 function init(elemnts) {
                     stage = new Kinetic.Stage({
                         container: 'roulette',
-                        width: 578,
-                        height: 200
+                        width: ROULETTE_WIDTH,
+                        height: ROULETTE_HEIGHT
                     });
 
                     layer = new Kinetic.Layer();
@@ -304,18 +322,28 @@
         </script>
     </head>
     <body>
-        <div th:unless="${#lists.isEmpty(punishments)}" id="roulette">
+        <div th:replace="thepunisher/fragments/header :: header">&nbsp;</div>
+        <div th:unless="${#lists.isEmpty(punishments)}" id="roulette" class="row">
             <canvas></canvas>
         </div>
-        <div id="navigation">
-            <a th:href="@{/create-punishment}" href="/create-punishment">Create Punishment</a>
-        </div>
+
+        <div id="result" class="modal fade" tabindex="-1" role="dialog"></div>
 
         <script id="result-tmpl" type="x-tmpl-mustache">
-            <div id="result">
-                <span class="title">{{title}}</span>
-                <span class="description">{{description}}</span>
-            </div>
+             <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+                        <h4 class="modal-title">Punishment selected</h4>
+                    </div>
+                    <div class="modal-body">
+                        <dl class="dl-horizontal">
+                            <dt class="title">{{title}}</dt>
+                            <dd class="description">{{description}}</dd>
+                        </dl>
+                    </div>
+                </div>
+             </div>
         </script>
     </body>
 </html>
