@@ -298,7 +298,7 @@ public class PunishAdminIntegrationTest {
 
         mockMvc.perform(get("/create-punishment"))
                 .andExpect(status().isOk())
-                .andExpect(xpath("//form/input[@type=\"submit\"]").exists());
+                .andExpect(xpath("//form/button[@type=\"submit\"]").exists());
     }
 
     @Test
@@ -307,9 +307,9 @@ public class PunishAdminIntegrationTest {
         mockMvc.perform(get("/create-punishment"))
                 .andExpect(status().isOk())
                 .andExpect(xpath("//form[@action=\"save-punishment\"]").exists())
-                .andExpect(xpath("//form/input[@type=\"submit\"]").exists())
-                .andExpect(xpath("//form/input[@name=\"description\"]").exists())
-                .andExpect(xpath("//form/input[@name=\"title\"]").exists());
+                .andExpect(xpath("//form/button[@type=\"submit\"]").exists())
+                .andExpect(xpath("//form//input[@name=\"description\"]").exists())
+                .andExpect(xpath("//form//input[@name=\"title\"]").exists());
     }
 
     // list punishment
@@ -358,7 +358,7 @@ public class PunishAdminIntegrationTest {
     public void get_create_punishment_return_the_previous_created_punishment_by_ajax() throws Exception {
         mockMvc.perform(get("/create-punishment"))
                 .andExpect(status().isOk())
-                .andExpect(xpath("//tbody[@id=\"list-punishments\"]/tr").exists());
+                .andExpect(xpath("//tbody[@id=\"list-punishments\"]").exists());
     }
 
     @Test
@@ -379,11 +379,11 @@ public class PunishAdminIntegrationTest {
 
         // check
 
-        HtmlDivision div = page.getHtmlElementById("list-punishments");
-        HtmlSpan spanTitle = div.getFirstByXPath("div/span[@class=\"title\"]");
-        HtmlSpan spanDesc = div.getFirstByXPath("div/span[@class=\"description\"]");
+        HtmlTableBody tbody = page.getHtmlElementById("list-punishments");
+        HtmlSpan spanTitle = tbody.getFirstByXPath("tr/td/span[@class=\"title\"]");
+        HtmlSpan spanDesc = tbody.getFirstByXPath("tr/td/span[@class=\"description\"]");
 
-        assertEquals(1, div.getHtmlElementsByTagName("div").size());
+        assertEquals(1, tbody.getHtmlElementsByTagName("tr").size());
         assertEquals("Spring Rocks", spanTitle.getTextContent());
         assertEquals("In case you didn't know, Spring Rocks!", spanDesc.getTextContent());
 
@@ -402,11 +402,11 @@ public class PunishAdminIntegrationTest {
         HtmlPage page =
                 webClient.getPage("http://localhost/the-punisher/create-punishment");
 
-        HtmlDivision div = page.getHtmlElementById("list-punishments");
-        List<HtmlSpan> spanTitle = getTitles(div);
-        List<HtmlSpan> spanDesc = getDescriptions(div);
+        HtmlTableBody tbody = page.getHtmlElementById("list-punishments");
+        List<HtmlSpan> spanTitle = getTitles(tbody);
+        List<HtmlSpan> spanDesc = getDescriptions(tbody);
 
-        assertEquals(2, div.getHtmlElementsByTagName("div").size());
+        assertEquals(2, tbody.getHtmlElementsByTagName("tr").size());
         assertEquals(2, spanTitle.size());
         assertEquals(2, spanDesc.size());
         assertEquals("title1", spanTitle.get(0).getTextContent());
@@ -424,11 +424,11 @@ public class PunishAdminIntegrationTest {
         HtmlPage page =
                 webClient.getPage("http://localhost/the-punisher/create-punishment");
 
-        HtmlDivision div = page.getHtmlElementById("list-punishments");
-        List<HtmlSpan> spanTitle = getTitles(div);
-        List<HtmlSpan> spanDesc = getDescriptions(div);
+        HtmlTableBody tbody = page.getHtmlElementById("list-punishments");
+        List<HtmlSpan> spanTitle = getTitles(tbody);
+        List<HtmlSpan> spanDesc = getDescriptions(tbody);
 
-        assertEquals(2, div.getHtmlElementsByTagName("div").size());
+        assertEquals(2, tbody.getHtmlElementsByTagName("tr").size());
         assertEquals(2, spanTitle.size());
         assertEquals(2, spanDesc.size());
         assertEquals("aaaa", spanTitle.get(0).getTextContent());
@@ -445,9 +445,9 @@ public class PunishAdminIntegrationTest {
                 webClient.getPage("http://localhost/the-punisher/create-punishment");
         submitPunishment(page, "", "In case you didn't know, Spring Rocks!");
 
-        HtmlSpan span = page.getHtmlElementById("error");
-        assertEquals("All fields are mandatory and title should be unique", span.getTextContent());
-        assertEquals("", span.getAttribute("style"));
+        HtmlParagraph paragraph = page.getHtmlElementById("error");
+        assertEquals("All fields are mandatory and title should be unique", paragraph.getTextContent());
+        assertEquals("", paragraph.getAttribute("style"));
     }
 
     @Test
@@ -458,9 +458,9 @@ public class PunishAdminIntegrationTest {
                 webClient.getPage("http://localhost/the-punisher/create-punishment");
         submitPunishment(page, "Title", "");
 
-        HtmlSpan span = page.getHtmlElementById("error");
-        assertEquals("All fields are mandatory and title should be unique", span.getTextContent());
-        assertEquals("", span.getAttribute("style"));
+        HtmlParagraph paragraph = page.getHtmlElementById("error");
+        assertEquals("All fields are mandatory and title should be unique", paragraph.getTextContent());
+        assertEquals("", paragraph.getAttribute("style"));
     }
 
     @Test
@@ -572,12 +572,12 @@ public class PunishAdminIntegrationTest {
 
         HtmlPage page =
                 webClient.getPage("http://localhost/the-punisher/create-punishment");
-        HtmlDivision div = page.getHtmlElementById("list-punishments");
+        HtmlTableBody tbody = page.getHtmlElementById("list-punishments");
 
-        List<HtmlSpan> spanEdit = getEditButtons(div);
+        List<HtmlButton> buttonEdit = getEditButtons(tbody);
 
-        assertEquals(1, spanEdit.size());
-        assertNotNull(spanEdit.get(0).getAttribute("data-id"));
+        assertEquals(1, buttonEdit.size());
+        assertNotNull(buttonEdit.get(0).getAttribute("data-id"));
     }
 
     @Test
@@ -589,13 +589,13 @@ public class PunishAdminIntegrationTest {
         HtmlPage page =
                 webClient.getPage("http://localhost/the-punisher/create-punishment");
 
-        HtmlDivision div = page.getHtmlElementById("list-punishments");
-        List<HtmlSpan> spanDelete = getEditButtons(div);
+        HtmlTableBody tbody = page.getHtmlElementById("list-punishments");
+        List<HtmlButton> buttonEdit = getEditButtons(tbody);
 
-        assertEquals(2, div.getHtmlElementsByTagName("div").size());
-        assertEquals(2, spanDelete.size());
-        assertEquals("Edit", spanDelete.get(0).getTextContent());
-        assertEquals("Edit", spanDelete.get(1).getTextContent());
+        assertEquals(2, tbody.getHtmlElementsByTagName("tr").size());
+        assertEquals(2, buttonEdit.size());
+        assertEquals("Edit", buttonEdit.get(0).getTextContent());
+        assertEquals("Edit", buttonEdit.get(1).getTextContent());
     }
 
     @Test
@@ -606,17 +606,17 @@ public class PunishAdminIntegrationTest {
         HtmlPage page =
                 webClient.getPage("http://localhost/the-punisher/create-punishment");
 
-        HtmlDivision div = page.getHtmlElementById("list-punishments");
-        List<HtmlSpan> spanEdit = getEditButtons(div);
+        HtmlTableBody tbody = page.getHtmlElementById("list-punishments");
+        List<HtmlButton> buttonEdit = getEditButtons(tbody);
 
-        spanEdit.get(0).click();
+        buttonEdit.get(0).click();
 
-        HtmlInput titleInput = ((List<HtmlInput>)div.getByXPath("div/input[@name=\"title\"]")).get(0);
-        HtmlInput descriptionInput =  ((List<HtmlInput>)div.getByXPath("div/input[@name=\"description\"]")).get(0);
+        HtmlInput titleInput = ((List<HtmlInput>)tbody.getByXPath("tr/td/input[@name=\"title\"]")).get(0);
+        HtmlInput descriptionInput =  ((List<HtmlInput>)tbody.getByXPath("tr/td/input[@name=\"description\"]")).get(0);
 
         assertEquals("aaaa",titleInput.getValueAttribute());
         assertEquals("desc2",descriptionInput.getValueAttribute());
-        assertEquals("Save", spanEdit.get(0).getTextContent());
+        assertEquals("Save", buttonEdit.get(0).getTextContent());
     }
 
     @Test
@@ -627,20 +627,20 @@ public class PunishAdminIntegrationTest {
         HtmlPage page =
                 webClient.getPage("http://localhost/the-punisher/create-punishment");
 
-        HtmlDivision div = page.getHtmlElementById("list-punishments");
-        List<HtmlSpan> spanEdit = getEditButtons(div);
+        HtmlTableBody tbody = page.getHtmlElementById("list-punishments");
+        List<HtmlButton> buttonEdit = getEditButtons(tbody);
 
-        spanEdit.get(0).click();
+        buttonEdit.get(0).click();
 
-        HtmlTextInput titleInput = getEditedTitle(div).get(0);
+        HtmlTextInput titleInput = getEditedTitle(tbody).get(0);
         titleInput.setText("bubbubub");
 
-        spanEdit.get(0).click();
+        buttonEdit.get(0).click();
 
-        List<HtmlSpan> spanTitle = getTitles(div);
-        List<HtmlSpan> spanDesc = getDescriptions(div);
+        List<HtmlSpan> spanTitle = getTitles(tbody);
+        List<HtmlSpan> spanDesc = getDescriptions(tbody);
 
-        assertEquals(1, div.getHtmlElementsByTagName("div").size());
+        assertEquals(1, tbody.getHtmlElementsByTagName("tr").size());
         assertEquals(1, spanTitle.size());
         assertEquals(1, spanDesc.size());
         assertEquals("bubbubub", spanTitle.get(0).getTextContent());
@@ -736,40 +736,40 @@ public class PunishAdminIntegrationTest {
         HtmlPage page =
                 webClient.getPage("http://localhost/the-punisher/create-punishment");
 
-        HtmlDivision div = page.getHtmlElementById("list-punishments");
-        List<HtmlSpan> spanEdit = getEditButtons(div);
+        HtmlTableBody tbody = page.getHtmlElementById("list-punishments");
+        List<HtmlButton> buttonEdit = getEditButtons(tbody);
         // edit a.
-        spanEdit.get(0).click();
+        buttonEdit.get(0).click();
 
-        HtmlTextInput titleInput = getEditedTitle(div).get(0);
+        HtmlTextInput titleInput = getEditedTitle(tbody).get(0);
         titleInput.setText("bbbb");
 
-        spanEdit.get(0).click();
+        buttonEdit.get(0).click();
         // NOTA: cuidado con el espacio entre display y none
-        List<HtmlSpan> spanError = (List<HtmlSpan>)div.getByXPath("div/span[@class=\"error\" and not(contains(@style,'display: none'))]");
+        List<HtmlTableDataCell> tdError = (List<HtmlTableDataCell>)tbody.getByXPath("tr/td[@class=\"error\" and not(contains(@style,'display: none'))]");
 
-        assertEquals(2, div.getHtmlElementsByTagName("div").size());
-        assertEquals(1, spanError.size());
-        assertEquals("Title repeated", spanError.get(0).getTextContent());
+        assertEquals(2, tbody.getHtmlElementsByTagName("tr").size());
+        assertEquals(1, tdError.size());
+        assertEquals("Title repeated", tdError.get(0).getTextContent());
     }
 
     // helpers
 
 
-    private List<HtmlSpan> getDescriptions(HtmlDivision div) {
-        return (List<HtmlSpan>)div.getByXPath("div/span[@class=\"description\"]");
+    private List<HtmlSpan> getDescriptions(HtmlTableBody div) {
+        return (List<HtmlSpan>)div.getByXPath("tr/td/span[@class=\"description\"]");
     }
 
-    private List<HtmlTextInput> getEditedTitle(HtmlDivision div) {
-        return (List<HtmlTextInput>)div.getByXPath("div/input[@name=\"title\"]");
+    private List<HtmlTextInput> getEditedTitle(HtmlTableBody div) {
+        return (List<HtmlTextInput>)div.getByXPath("tr/td/input[@name=\"title\"]");
     }
 
-    private List<HtmlSpan> getTitles(HtmlDivision div) {
-        return (List<HtmlSpan>)div.getByXPath("div/span[@class=\"title\"]");
+    private List<HtmlSpan> getTitles(HtmlTableBody tbody) {
+        return (List<HtmlSpan>)tbody.getByXPath("tr/td/span[@class=\"title\"]");
     }
 
-    private List<HtmlSpan> getEditButtons(HtmlDivision div) {
-        return (List<HtmlSpan>)div.getByXPath("div/span[@class=\"edit\"]");
+    private List<HtmlButton> getEditButtons(HtmlTableBody tbody) {
+        return (List<HtmlButton>)tbody.getByXPath("tr/td/button[contains(@class,'edit')]");
     }
 
     private PunishmentForm createPunishmentData(String title, String description) {
