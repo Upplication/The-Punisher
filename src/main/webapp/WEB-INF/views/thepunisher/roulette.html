@@ -326,6 +326,17 @@
         <div th:unless="${#lists.isEmpty(punishments)}" id="roulette" class="row">
             <canvas></canvas>
         </div>
+        <div class="container" th:if="${#lists.isEmpty(punishments)}">
+            <div id="message" class="row">
+                <div class="alert alert-info">
+                    <strong>You don't have punishments</strong>
+                    Go to the admin page and create some cultural enterprise punishments
+                </div>
+                <p>
+                    We recommend you create punishments that help your team to improve its corporate culture and improve their relationships. Create some punishment that require some departments socialize with others, as a voucher of favors, buy some candy or help the new intership to be installed.
+                </p>
+            </div>
+        </div>
 
         <div id="result" class="modal fade" tabindex="-1" role="dialog"></div>
 

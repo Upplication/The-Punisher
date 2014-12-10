@@ -88,6 +88,28 @@ public class PunishRouletteIntegrationTest {
     }
 
     @Test
+    public void list_roulette_without_punishment_then_show_message_welcome() throws Exception {
+        mockMvc.perform(get("/roulette-punishments"))
+                .andExpect(status().isOk())
+                        // content
+                .andExpect(xpath("//div[@class=\"container\"]/div[@id=\"message\"]/p").exists())
+                        // title
+                .andExpect(xpath("//div[@class=\"container\"]/div[@id=\"message\"]//strong").exists())
+                .andExpect(xpath("//div[@id=\"roulette\"]").doesNotExist());
+
+    }
+
+    @Test
+    public void list_roulette_with_punishments_then_DONT_show_message_welcome() throws Exception {
+        punishmentRepository.create("abc", "desc2");
+
+        mockMvc.perform(get("/roulette-punishments"))
+                .andExpect(status().isOk())
+                .andExpect(xpath("//div[@class=\"container\"]/div[@id=\"message\"]").doesNotExist())
+                .andExpect(xpath("//div[@id=\"roulette\"]").exists());
+    }
+
+    @Test
     public void list_roulette_then_you_get_punishmemnts_in_vertical() throws Exception {
         // insert to the list
         punishmentRepository.create("abc", "desc2");

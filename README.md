@@ -46,11 +46,12 @@ Usuario: usuario que utiliza la aplicación ya configurada
 - [x] Como Usuario quiero ver la ruleta con los castigos para girarla
  - [x] Como Usuario quiero ver un botón de añadir castigo
  - [x] Como Usuario quiero ver los castigos en la ruleta si hay castigos.
-- [ ] Como Usuario quiero girar a la ruleta y que se pare en un castigo para ser castigado
+ - [x] Como Usuario quiero ver un mensaje de bienvenida si no hay castigos en la ruleta.
+- [x] Como Usuario quiero girar a la ruleta y que se pare en un castigo para ser castigado
  - [x] Como Usuario quiero un modo para hacer girar la ruleta y que de forma automática determine un castigo.
  - [x] Como Usuario quiero un indicador para saber que castigo he recibido.
  - [x] Como Usuario quiero un indicador para saber que castigo he recibido y que muestre la descripción del castigo
- - [ ] Como Usuario quiero volver a tirar.
+ - [x] Como Usuario quiero volver a tirar.
 
 ## ATDD técnico
 

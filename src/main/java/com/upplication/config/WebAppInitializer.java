@@ -9,13 +9,27 @@ import javax.servlet.*;
 public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
 
     @Override
+    public void onStartup(ServletContext context) throws ServletException {
+        super.onStartup(context);
+
+        String activeProfile = "default";
+
+        if (System.getProperty("RDS_DB_NAME") != null) {
+            activeProfile = "elasticbeanstalk";
+        }
+
+        context.setInitParameter("spring.profiles.active", activeProfile);
+    }
+
+
+    @Override
     protected String[] getServletMappings() {
         return new String[]{"/"};
     }
 
     @Override
     protected Class<?>[] getRootConfigClasses() {
-        return new Class<?>[] {ApplicationConfig.class, DataSourceConfig.class, JpaConfig.class, SecurityConfig.class};
+        return new Class<?>[] {ApplicationConfig.class, EnvironmentCloudBuilder.class, EnvironmentLocalBuilder.class, DataSourceConfig.class, JpaConfig.class,  SecurityConfig.class};
     }
 
     @Override
@@ -37,6 +51,8 @@ public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServlet
     @Override
     protected void customizeRegistration(ServletRegistration.Dynamic registration) {
         registration.setInitParameter("defaultHtmlEscape", "true");
-        registration.setInitParameter("spring.profiles.active", "default");
+        // TODO: FIXME: what is not work?
+        //registration.setInitParameter("spring.profiles.active", "elasticbeanstalk");
+        //registration.setInitParameter(ContextLoader.CONTEXT_INITIALIZER_CLASSES_PARAM, CloudApplicationContextInitializer.class.getCanonicalName());
     }
 }
