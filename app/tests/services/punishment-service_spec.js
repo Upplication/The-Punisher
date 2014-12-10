@@ -18,7 +18,7 @@ describe('punishment-service_spec.js', function () {
                         expect(data.id).toBe(1);
                     });
 
-                httpBackend.expectPOST('/punishment/create').respond(200, {
+                httpBackend.expectPOST(/punishment\/create/).respond(200, {
                     id : 1,
                     title : "Name",
                     description : "Description"
@@ -37,7 +37,7 @@ describe('punishment-service_spec.js', function () {
                         expect(true).toBe(true);
                     });
 
-                httpBackend.expectPOST('/punishment/create').respond(400, {});
+                httpBackend.expectPOST(/punishment\/create/).respond(400, {});
                 httpBackend.flush();
             });
         });
@@ -53,7 +53,7 @@ describe('punishment-service_spec.js', function () {
                         expect(data.description).toBe("Description2");
                     });
 
-                httpBackend.expectPUT('/punishment/1').respond(200, {
+                httpBackend.expectPUT(/punishment\/1/).respond(200, {
                     id : 1,
                     title : "Name2",
                     description : "Description2"
@@ -72,7 +72,7 @@ describe('punishment-service_spec.js', function () {
                         expect(true).toBe(true);
                     });
 
-                httpBackend.expectPUT('/punishment/1').respond(400, {});
+                httpBackend.expectPUT(/punishment\/1/).respond(400, {});
                 httpBackend.flush();
             });
         });
@@ -88,7 +88,7 @@ describe('punishment-service_spec.js', function () {
                         expect(false).toBe(true);
                     });
 
-                httpBackend.expectDELETE('/punishment/1').respond(200, {});
+                httpBackend.expectDELETE(/punishment\/1/).respond(200, {});
                 httpBackend.flush();
             });
         });
@@ -102,7 +102,7 @@ describe('punishment-service_spec.js', function () {
                         expect(true).toBe(true);
                     });
 
-                httpBackend.expectDELETE('/punishment/0').respond(404, {});
+                httpBackend.expectDELETE(/punishment\/0/).respond(404, {});
                 httpBackend.flush();
             });
         });
@@ -138,7 +138,7 @@ describe('punishment-service_spec.js', function () {
                     expect(punishments).toBe(punishmentList);
                 });
 
-            httpBackend.expectGET('/punishment/list').respond(200, punishmentList);
+            httpBackend.expectGET(/punishment\/list/).respond(200, punishmentList);
             httpBackend.flush();
         });
     });

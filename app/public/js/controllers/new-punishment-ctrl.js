@@ -14,7 +14,7 @@
              * @returns {boolean} If is valid
              */
             $scope.isValid = function () {
-                return $scope.name.length > 0 && $scope.description.length > 0;
+                return $scope.name && $scope.name.length > 0 && $scope.description && $scope.description.length > 0;
             };
 
             /**

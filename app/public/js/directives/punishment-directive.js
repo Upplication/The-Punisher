@@ -4,10 +4,11 @@
     app.directive('punishment', function () {
         return {
             restrict : 'E',
-            template : '',
+            templateUrl : '/templates/punishment-directive.html',
             scope : {
                 model : '='
             },
+            replace: true,
             controller : ['$scope', 'punishmentService', '$timeout', function ($scope, punishmentService, $timeout) {
                 $scope.editing = false;
                 $scope.showUndo = false;
@@ -55,6 +56,7 @@
                         .then(function () {
                             $scope.model.title = data.title;
                             $scope.model.description = data.description;
+                            $scope.editing = false;
                         }, function () {
                             $scope.error = true;
                         });
@@ -90,9 +92,9 @@
                  */
                 $scope.undo = function () {
                     $scope.delete = false;
+                    $scope.showUndo = false;
                     $timeout.flush();
                 };
-
             }],
             link : function (scope, elem, attrs) {
                 scope.editable = attrs.editable === 'true';

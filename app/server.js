@@ -1,7 +1,7 @@
 'use strict';
 
 var Static = require('node-static'),
-    file = new Static.Server('./public', { headers: {"Cache-Control": "no-cache, must-revalidate"} }),
+    file = new Static.Server('./dist', { headers: {"Cache-Control": "no-cache, must-revalidate"} }),
     http = require('http');
 
 module.exports = function () {

@@ -1,0 +1,17 @@
+<section id="roulette" ng-controller="RouletteCtrl" ng-init="init()">
+    <punishment ng-repeat="p in punishments"
+                model="p"
+                editable="false"
+                class="{{ colors[$index] }}"></punishment>
+
+    <div class="random-btn" ng-show="showButton && !done">
+        <p>Tap the button and receive a punishment.</p>
+        <button ng-click="spin()">Be punished!</button>
+    </div>
+
+    <div class="result" ng-show="done">
+        <h1>This is your punishment!</h1>
+        <h2>{{ selected.title }}</h2>
+        <p>{{ selected.description }}</p>
+    </div>
+</section>

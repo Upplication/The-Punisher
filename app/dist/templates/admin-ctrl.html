@@ -1,0 +1,20 @@
+<section id="admin" ng-controller="AdminCtrl" ng-init="init()">
+    <section id="new-punishment" ng-controller="NewPunishmentCtrl">
+        <form name="new-punishment" novalidate>
+            <h2>New punishment</h2>
+
+            <input type="text" name="title" ng-model="name" placeholder="Punishment title..." required />
+            <textarea name="description" ng-model="description" placeholder="Punnishment description..." required></textarea>
+
+            <div class="multi-buttons">
+                <button type="submit" ng-disabled="!isValid()" ng-click="doAction()" class="full-width">
+                    <span class="icon-ok"></span>
+                    <span>Create punishment</span>
+                </button>
+            </div>
+            <div class="clear"></div>
+        </form>
+    </section>
+
+    <punishment ng-repeat="p in punishments" model="p" editable="true"></punishment>
+</section>

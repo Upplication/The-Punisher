@@ -77,7 +77,7 @@ describe('punishment-directive_spec.js', function () {
 
             isolated.saveChanges();
 
-            $httpBackend.expectPUT('/punishment/1').respond(200, {
+            $httpBackend.expectPUT(/punishment\/1/).respond(200, {
                 id : 1,
                 title : "Title",
                 description : "Description updated"
@@ -99,7 +99,7 @@ describe('punishment-directive_spec.js', function () {
 
             isolated.saveChanges();
 
-            $httpBackend.expectPUT('/punishment/1').respond(400, {});
+            $httpBackend.expectPUT(/punishment\/1/).respond(400, {});
 
             $httpBackend.flush();
 
@@ -149,7 +149,7 @@ describe('punishment-directive_spec.js', function () {
             var isolated = editablePunishment.isolateScope();
 
             isolated.remove();
-            $httpBackend.expectDELETE('/punishment/1').respond(200, {});
+            $httpBackend.expectDELETE(/punishment\/1/).respond(200, {});
             $timeout.flush();
             $httpBackend.flush();
 

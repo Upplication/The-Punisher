@@ -44,7 +44,7 @@ describe('admin-ctrl_spec.js: Admin controller - ', function () {
     describe('when it finishes loading the punishments', function () {
         it('should hide the loading message and display all punishments', function () {
             $scope.init();
-            $httpBackend.expectGET('/punishment/list').respond(200, {punishments: punishments});
+            $httpBackend.expectGET(/punishment\/list/).respond(200, {punishments: punishments});
             $httpBackend.flush();
 
             expect($scope.loading).toBe(false);
@@ -55,7 +55,7 @@ describe('admin-ctrl_spec.js: Admin controller - ', function () {
     describe('when a new punishment is added', function () {
         it('should add that punishment', function () {
             $scope.init();
-            $httpBackend.expectGET('/punishment/list').respond(200, {punishments: punishments});
+            $httpBackend.expectGET(/punishment\/list/).respond(200, {punishments: punishments});
             $httpBackend.flush();
 
             rootScope.$broadcast('punishment-added', {

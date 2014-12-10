@@ -1,0 +1,31 @@
+<div ng-class="{'punishment': editable, 'roulette-punishment' : !editable}" ng-show="visible">
+    <div class="view" ng-show="!editing && !showUndo">
+        <div class="info" ng-class="{'margin-bottom-1em' : editable}">
+            <h5>{{ model.title }}</h5>
+            <p>{{ model.description }}</p>
+        </div>
+
+        <div class="multi-buttons margin-top-1em" ng-show="editable">
+            <button ng-click="edit()"><span class="icon-edit"></span><span>Edit</span></button>
+            <button ng-click="remove()"><span class="icon-cancel"></span><span>Delete</span></button>
+        </div>
+    </div>
+
+    <div class="edit" ng-show="editing">
+        <input type="text" name="title" ng-model="data.title" placeholder="Punishment title..." required />
+        <textarea name="description" ng-model="data.description" placeholder="Punnishment description..." required></textarea>
+        <div class="multi-buttons">
+            <button ng-click="saveChanges()"><span class="icon-ok"></span><span>Save</span></button>
+            <button ng-click="cancel()"><span class="icon-cancel"></span><span>Cancel</span></button>
+        </div>
+    </div>
+
+    <div class="undo" ng-show="showUndo">
+        <div class="multi-buttons single">
+            <button type="submit" ng-click="undo()" class="full-width grey">
+                <span class="icon-undo"></span>
+                <span>Undo</span>
+            </button>
+        </div>
+    </div>
+</div>

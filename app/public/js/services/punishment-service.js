@@ -1,4 +1,4 @@
-(function (app) {
+(function (app, config) {
     'use strict';
 
     app.service('punishmentService', ['$q', '$http',
@@ -14,7 +14,7 @@
             service.create = function (name, description) {
                 var deferred = $q.defer();
 
-                $http.post('/punishment/create', {
+                $http.post(config.backend + '/punishment/create', {
                     title : name,
                     description : description
                 }).then(function (response) {
@@ -36,7 +36,7 @@
             service.update = function (id, name, description) {
                 var deferred = $q.defer();
 
-                $http.put('/punishment/' + Number(id), {
+                $http.put(config.backend + '/punishment/' + Number(id), {
                     title : name,
                     description : description
                 }).then(function (response) {
@@ -56,7 +56,7 @@
             service.remove = function (id) {
                 var deferred = $q.defer();
 
-                $http.delete('/punishment/' + Number(id))
+                $http.delete(config.backend + '/punishment/' + Number(id))
                     .then(function () {
                         deferred.resolve(true);
                     }, function () {
@@ -73,7 +73,7 @@
             service.list = function () {
                 var deferred = $q.defer();
 
-                $http.get('/punishment/list')
+                $http.get(config.backend + '/punishment/list')
                     .then(function (response) {
                         if (response.data && response.data.punishments) {
                             deferred.resolve(response.data.punishments);
@@ -91,4 +91,4 @@
         }
     ]);
 
-}(window.punisher));
+}(window.punisher, window.config));

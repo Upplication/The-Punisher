@@ -11,7 +11,7 @@ describe('new-punishment-ctrl_spec.js: New punishment - ', function () {
         $scope.name = 'Name';
         $scope.description = 'Description';
         $scope.doAction();
-        $httpBackend.expectPOST('/punishment/create').respond(200, {
+        $httpBackend.expectPOST(/punishment\/create/).respond(200, {
             id: 1,
             title: "Name",
             description: "Description"
@@ -23,7 +23,7 @@ describe('new-punishment-ctrl_spec.js: New punishment - ', function () {
         $scope.description = '';
         $scope.doAction();
 
-        $httpBackend.expectPOST('/punishment/create').respond(400, '');
+        $httpBackend.expectPOST(/punishment\/create/).respond(400, '');
     };
 
     beforeEach(module('ThePunisher'));
