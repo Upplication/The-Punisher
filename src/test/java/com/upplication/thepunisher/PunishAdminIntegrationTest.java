@@ -365,7 +365,7 @@ public class PunishAdminIntegrationTest {
     public void get_create_punishment_return_link_to_roulette() throws Exception {
         mockMvc.perform(get("/create-punishment"))
                 .andExpect(status().isOk())
-                .andExpect(xpath("//nav[@id=\"navigation\"]/ul/li/a").exists());
+                .andExpect(xpath("//div[@id=\"navigation\"]/ul/li/a").exists());
     }
 
     @Test

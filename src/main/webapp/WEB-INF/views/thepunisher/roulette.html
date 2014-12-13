@@ -322,7 +322,20 @@
         </script>
     </head>
     <body>
+
         <div th:replace="thepunisher/fragments/header :: header">&nbsp;</div>
+
+        <div class="container welcome" th:if="${param.welcome}">
+            <p>
+                Welcome the punishment WebApp. The main goal is to improve the performance of the company culture. When some of the company rules are broken by a teammate, like being late or not commenting a commit correctly, this app punishes the fellow with a social punishment improving relations with the company and its environment by forcing it to make a social punishment like:
+            <ul>
+                <li>Review javadoc and add all the params descriptions, and return, and throws...</li>
+                <li>Clean up the code or desktops or whatever ...;)</li>
+                <li>Be imaginative</li>
+            </ul>
+            </p>
+        </div>
+
         <div th:unless="${#lists.isEmpty(punishments)}" id="roulette" class="row">
             <canvas></canvas>
         </div>

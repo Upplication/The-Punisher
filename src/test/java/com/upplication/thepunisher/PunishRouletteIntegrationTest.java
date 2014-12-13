@@ -82,8 +82,8 @@ public class PunishRouletteIntegrationTest {
     public void list_roulette_without_punishment_then_show_button_go_to_admin_page() throws Exception {
         mockMvc.perform(get("/roulette-punishments"))
                 .andExpect(status().isOk())
-                .andExpect(xpath("//nav[@id=\"navigation\"]").exists())
-                .andExpect(xpath("//nav[@id=\"navigation\"]/ul/li/a").exists())
+                .andExpect(xpath("//div[@id=\"navigation\"]").exists())
+                .andExpect(xpath("//div[@id=\"navigation\"]/ul/li/a").exists())
                 .andExpect(xpath("//nav[@id=\"roulette\"]").doesNotExist());
     }
 

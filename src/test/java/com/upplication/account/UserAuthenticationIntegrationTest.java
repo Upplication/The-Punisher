@@ -19,7 +19,7 @@ public class UserAuthenticationIntegrationTest extends WebSecurityConfigurationA
 
     private static String SEC_CONTEXT_ATTR = HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
 
-   // @Test
+    //@Test
     public void requiresAuthentication() throws Exception {
         mockMvc.perform(get("/account/current"))
                 .andExpect(redirectedUrl("http://localhost/signin"));

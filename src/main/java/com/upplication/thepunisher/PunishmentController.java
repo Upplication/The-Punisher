@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.validation.Valid;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -20,6 +21,11 @@ class PunishmentController {
 
     @Autowired
     private PunishmentRepository punishmentRepository;
+
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public String index(Principal principal) {
+        return "redirect:/roulette-punishments?welcome=true";
+    }
 
 
     @RequestMapping(value = "save-punishment",

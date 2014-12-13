@@ -52,8 +52,8 @@ Usuario: usuario que utiliza la aplicación ya configurada
  - [x] Como Usuario quiero un indicador para saber que castigo he recibido.
  - [x] Como Usuario quiero un indicador para saber que castigo he recibido y que muestre la descripción del castigo
  - [x] Como Usuario quiero volver a tirar.
-- [ ] Como Usuario quiero una página de bienvenida con acceso a todas las secciones
- - [ ] Como Usuario quiero un mensaje de bienvenida.
+- [x] Como Usuario quiero una página de bienvenida con acceso a todas las secciones
+ - [x] Como Usuario quiero un mensaje de bienvenida.
 
 ## ATDD técnico
 

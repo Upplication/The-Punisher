@@ -21,7 +21,7 @@ public class EnvironmentCloudBuilder {
     private String password;
     @Value("${hibernate.elasticbeanstalk.dialect}")
     private String dialect;
-    @Value("${hibernate.hbm2ddl.auto}")
+    @Value("${hibernate.elasticbeanstalk.hbm2ddl.auto}")
     private String hbm2ddlAuto;
 
 
