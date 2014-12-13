@@ -1,7 +1,9 @@
 package com.upplication.account;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.test.web.servlet.MvcResult;
@@ -19,6 +21,16 @@ public class UserAuthenticationIntegrationTest extends WebSecurityConfigurationA
 
     private static String SEC_CONTEXT_ATTR = HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
 
+    @Autowired
+    AccountRepository accountRepository;
+
+    @Before
+    public void initialize(){
+        if (accountRepository.findByEmail("user") == null){
+            accountRepository.save(new Account("user", "demo", "ROLE_USER"));
+            accountRepository.save(new Account("admin", "admin", "ROLE_ADMIN"));
+        }
+    }
     //@Test
     public void requiresAuthentication() throws Exception {
         mockMvc.perform(get("/account/current"))
